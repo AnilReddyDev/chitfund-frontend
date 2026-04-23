@@ -6,6 +6,7 @@ import api from "../services/api";
 
 import AssignMemberModal from "../components/group/AssignMemberModal";
 
+
 export default function GroupMemberHistory() {
   const { groupId } = useParams();
 
@@ -46,7 +47,7 @@ export default function GroupMemberHistory() {
   }, [allMembers]);
 
   return (
-    <div className="p-4">
+    <div className="p-4 min-h-screen bg-gradient-to-b from-orange-600 to-orange-400">
 
       <h1 className="text-lg font-semibold mb-3">
         Group Members ({members.length})
@@ -74,7 +75,7 @@ export default function GroupMemberHistory() {
       {/* Add Member Button */}
       <button
         onClick={() => setOpen(true)}
-        className="bg-black text-white px-4 py-2 rounded mt-4 w-full"
+        className="bg-green-600 text-black px-4 py-2 rounded mt-4 w-full"
       >
         Add Member
       </button>

@@ -1,7 +1,8 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import api from "../services/api";
-import { AppContext } from "../context/AppContext";
 import Header from "../components/layout/Header";
+import useGroup from "../hooks/useGroup";
+
 import {
   LineChart,
   Line,
@@ -14,7 +15,8 @@ import {
 } from "recharts";
 
 export default function Dashboard() {
-  const { groupId } = useContext(AppContext);
+
+  const groupId = useGroup();
 
   const [data, setData] = useState(null);
   const [chartData, setChartData] = useState([]);
@@ -38,12 +40,12 @@ export default function Dashboard() {
   if (!data) return <p className="p-4">Loading...</p>;
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-b from-orange-600 to-orange-400">
       <Header title="Dashboard" />
 
       <div className="p-4 grid grid-cols-2 gap-3">
         {/* Card */}
-        <Card title="Collection" value={`₹${data.totalCollection}`} />
+        <Card  title="Collection" value={`₹${data.totalCollection}`} />
 
         <Card title="Profit" value={`₹${data.totalProfit}`} />
 
@@ -79,7 +81,7 @@ export default function Dashboard() {
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="profit" />
+              <Bar dataKey="profit" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -90,7 +92,7 @@ export default function Dashboard() {
 
 function Card({ title, value }) {
   return (
-    <div className="bg-white p-4 rounded-xl shadow">
+    <div className="bg-white p-4 rounded-lg shadow-[#ffffff1a_0px_1px_1px_0px_inset,#32325d40_0px_50px_100px_-20px,#0000004d_0px_30px_60px_-30px]">
       <p className="text-xs text-gray-400">{title}</p>
       <h2 className="text-lg font-semibold">{value}</h2>
     </div>

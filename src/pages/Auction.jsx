@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import api from "../services/api";
-import { AppContext } from "../context/AppContext";
 import Header from "../components/layout/Header";
+import useGroup from "../hooks/useGroup";
 
 export default function Auction() {
-  const { groupId } = useContext(AppContext);
+
+  const groupId = useGroup();
 
   const [members, setMembers] = useState([]);
   const [winner, setWinner] = useState("");
@@ -50,11 +51,11 @@ export default function Auction() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen mb-10 bg-gradient-to-b from-orange-600 to-orange-500">
       <Header title="Auction" />
 
       {/* Auction Form */}
-      <div className="p-4 space-y-4">
+      <div className="p-4 space-y-4 bg-slate-50 m-3 rounded-md shadow-[#ffffff1a_0px_1px_1px_0px_inset,#32325d40_0px_50px_100px_-20px,#0000004d_0px_30px_60px_-30px]">
         {/* Month Input */}
         <div>
           <label className="text-sm text-gray-500">Month</label>
@@ -98,7 +99,7 @@ export default function Auction() {
           <label className="text-sm text-gray-500">Bid Amount</label>
           <input
             type="number"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded "
             placeholder="Enter bid amount"
             onChange={(e) => setBidAmount(e.target.value)}
           />
@@ -107,7 +108,7 @@ export default function Auction() {
         {/* Submit */}
         <button
           onClick={handleAuction}
-          className="w-full bg-black text-white p-2 rounded"
+          className="w-full bg-green-500 text-black p-2 rounded"
         >
           Confirm Auction
         </button>
@@ -115,20 +116,21 @@ export default function Auction() {
 
       {/* Auction History */}
       <div className="mt-6">
-        <h3 className="font-semibold mb-2">Auction History</h3>
+        <h3 className="font-semibold m-3">Auction History</h3>
 
         {auctionHistory.length === 0 && (
           <p className="text-gray-400 text-sm">No auctions yet</p>
         )}
 
         {auctionHistory.map((a) => (
-          <div key={a.id} className="border p-3 rounded mb-2 bg-white">
+          <div key={a.id} className="border p-3 rounded  bg-slate-100 shadow-[#ffffff1a_0px_1px_1px_0px_inset,#32325d40_0px_50px_100px_-20px,#0000004d_0px_30px_60px_-30px] m-3">
             <p className="text-sm">Month: {a.month}</p>
             <p className="text-sm">Winner: {a.winnerMemberId}</p>
             <p className="text-sm">Payout: ₹{a.payoutAmount}</p>
             <p className="text-sm text-green-600">Profit: ₹{a.profit}</p>
           </div>
         ))}
+        <div className="h-5 w-full"> </div>
       </div>
     </div>
   );

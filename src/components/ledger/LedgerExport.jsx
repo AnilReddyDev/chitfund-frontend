@@ -1,9 +1,10 @@
 import React from 'react'
 import api from "../../services/api";
-import { useContext } from 'react';
-import { AppContext } from "../../context/AppContext";
+import useGroup from "../../hooks/useGroup";
+
 export default function LedgerExport() {
-    const { groupId } = useContext(AppContext);
+
+    const groupId = useGroup();
     const handleDownload = async () => {
   try {
     const res = await api.get("/ledger/export/csv", {

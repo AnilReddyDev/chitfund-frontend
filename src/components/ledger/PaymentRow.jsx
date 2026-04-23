@@ -3,9 +3,11 @@ import Card from "../ui/Card";
 import api from "../../services/api";
 import { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
+import useGroup from "../../hooks/useGroup";
 
 const PaymentRow = ({ member, onRefresh }) => {
-  const { groupId, month } = useContext(AppContext);
+  const {  month } = useContext(AppContext);
+  const groupId = useGroup();
 
   const handleCollect = async () => {
     try {

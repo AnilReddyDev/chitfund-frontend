@@ -3,6 +3,7 @@ import api from "../services/api";
 import GroupCard from "../components/group/GroupCard";
 import FAB from "../components/ui/FAB";
 import CreateGroupModal from "../components/group/CreateGroupModal";
+import Header from "../components/layout/Header";
 
 export default function GroupPortal() {
   const [groups, setGroups] = useState([]);
@@ -18,7 +19,8 @@ export default function GroupPortal() {
   }, []);
 
   return (
-    <div className="p-4">
+    <div className="min-h-screen bg-gradient-to-b from-orange-600 to-orange-400">
+     <Header title="Groups" />
       {groups.map((g) => (
         <GroupCard key={g.id} group={g} />
       ))}

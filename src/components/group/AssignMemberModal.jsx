@@ -44,7 +44,7 @@ export default function AssignMemberModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-end">
+    <div className="fixed inset-0  flex items-end">
       <Card className="w-full max-h-[80%] overflow-auto p-4">
 
         <h2 className="font-semibold mb-3 text-lg">
