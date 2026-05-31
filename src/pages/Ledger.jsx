@@ -13,6 +13,7 @@ export default function Ledger() {
 
   const [members, setMembers] = useState([]);
   const [months, setMonths] = useState([]);
+  const [groupName, setGroupName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedCell, setSelectedCell] = useState(null);
@@ -20,6 +21,12 @@ export default function Ledger() {
   const applyLedger = (payload) => {
     setMembers(Array.isArray(payload?.members) ? payload.members : []);
     setMonths(Array.isArray(payload?.months) ? payload.months : []);
+    setGroupName(
+      payload?.groupName ||
+        payload?.group?.name ||
+        payload?.name ||
+        "",
+    );
     setError("");
   };
 
@@ -118,7 +125,12 @@ export default function Ledger() {
                 {members.length} members, {months.length} months
               </p>
             </div>
-            <LedgerExport groupId={groupId}>
+            <LedgerExport
+              groupId={groupId}
+              groupName={groupName}
+              members={members}
+              months={months}
+            >
               <Download size={16} />
               CSV
             </LedgerExport>
