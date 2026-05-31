@@ -1,4 +1,12 @@
-# React + Vite
+# ChitFund Frontend
+
+For a full project handoff and architecture guide, read:
+
+- [`docs/PROJECT_HANDOFF.md`](docs/PROJECT_HANDOFF.md)
+
+The handoff document explains the routes, API assumptions, UI patterns, state-management rules, and current implementation details for future agents.
+
+## Vite Notes
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

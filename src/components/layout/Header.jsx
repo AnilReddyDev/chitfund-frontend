@@ -1,7 +1,8 @@
-const Header = ({ title }) => {
+const Header = ({ title, subtitle }) => {
   return (
-    <div className="sticky top-0  p-4  z-10 bg-gray-400 rounded-sm bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border-[0.5px] border-gray-100">
-      <h1 className="text-lg font-semibold">{title}</h1>
+    <div className="sticky top-0 z-10 border-b border-white/20 bg-white/15 px-4 py-3 text-white backdrop-blur-xl">
+      <h1 className="text-lg font-semibold leading-6">{title}</h1>
+      {subtitle && <p className="text-xs text-white/75">{subtitle}</p>}
     </div>
   );
 };

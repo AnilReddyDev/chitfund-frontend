@@ -20,7 +20,7 @@ const PaymentRow = ({ member, onRefresh }) => {
       });
 
       onRefresh(); // reload ledger
-    } catch (err) {
+    } catch {
       alert("Payment already done");
     }
   };

@@ -9,6 +9,7 @@ import MemberHistory from "./pages/MemberHistory";
 import GroupMemberHistory from "./pages/GroupMembersHistory";
 
 import BottomNav from "./components/layout/BottomNav";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         </Routes>
 
         <BottomNav />
+        <Toaster position="top-center" />
       </div>
     </BrowserRouter>
   );

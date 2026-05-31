@@ -1,29 +1,45 @@
 // src/components/group/AssignMemberModal.jsx
 
 import { useEffect, useState } from "react";
+import { Check, Phone, Plus, Users, X } from "lucide-react";
 import api from "../../services/api";
-import Card from "../ui/Card";
-import Button from "../ui/Button";
+import Skeleton from "../ui/Skeleton";
 
 export default function AssignMemberModal({
   groupId,
-  existingMembers, // [id, id]
+  existingMembers,
   onClose,
 }) {
   const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [loadingId, setLoadingId] = useState(null);
 
-  // 📡 Fetch all members
   useEffect(() => {
-    api.get("/members").then((res) => {
-      setMembers(res.data || []);
-    });
+    let active = true;
+
+    api
+      .get("/members")
+      .then((res) => {
+        if (!active) return;
+        setMembers(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch((err) => {
+        if (!active) return;
+        console.error("Error fetching members", err);
+        setError("Could not load members.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
-  // ✅ FIXED: already IDs
   const existingIds = new Set(existingMembers || []);
 
-  // ➕ Assign member
   const assign = async (memberId) => {
     try {
       setLoadingId(memberId);
@@ -33,10 +49,9 @@ export default function AssignMemberModal({
         memberId,
       });
 
-      // 🔥 instant UX improvement
       onClose();
-
     } catch (err) {
+      console.error("Error assigning member", err);
       alert("Already added or error");
     } finally {
       setLoadingId(null);
@@ -44,51 +59,80 @@ export default function AssignMemberModal({
   };
 
   return (
-    <div className="fixed inset-0  flex items-end">
-      <Card className="w-full max-h-[80%] overflow-auto p-4">
+    <div className="fixed inset-0 z-30 flex items-end bg-slate-950/60 px-3 pb-3 backdrop-blur-sm">
+      <div className="max-h-[82vh] w-full overflow-hidden rounded-lg bg-white shadow-2xl">
+        <div className="flex items-start justify-between gap-3 border-b border-slate-100 p-4">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-orange-600">
+              Assign members
+            </p>
+            <h2 className="mt-1 text-xl font-semibold text-slate-950">
+              Select Members
+            </h2>
+          </div>
+          <button
+            type="button"
+            aria-label="Close assign members"
+            onClick={onClose}
+            className="grid h-10 w-10 place-items-center rounded-lg bg-slate-100 text-slate-600"
+          >
+            <X size={18} />
+          </button>
+        </div>
 
-        <h2 className="font-semibold mb-3 text-lg">
-          Select Members
-        </h2>
+        <div className="max-h-[64vh] space-y-3 overflow-auto p-4">
+          {loading && (
+            <>
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </>
+          )}
 
-        {members.map((m) => {
-          const isAdded = existingIds.has(m.id);
+          {!loading && error && (
+            <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+              {error}
+            </p>
+          )}
 
-          return (
-            <div
-              key={m.id}
-              className="flex justify-between items-center mb-3"
-            >
-              <div>
-                <p className="font-medium">{m.name}</p>
-                <p className="text-xs text-gray-400">
-                  {m.phone}
-                </p>
-              </div>
+          {!loading && !error && members.length === 0 && (
+            <p className="rounded-lg bg-slate-50 p-4 text-center text-sm text-slate-400">
+              No saved members to assign.
+            </p>
+          )}
 
-              <Button
-                onClick={() => assign(m.id)}
-                disabled={isAdded || loadingId === m.id}
+          {!loading && !error && members.map((member) => {
+            const isAdded = existingIds.has(member.id);
+
+            return (
+              <div
+                key={member.id}
+                className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 p-3"
               >
-                {isAdded
-                  ? "Added"
-                  : loadingId === m.id
-                  ? "Adding..."
-                  : "Add"}
-              </Button>
-            </div>
-          );
-        })}
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-slate-950">
+                    {member.name || "Unnamed member"}
+                  </p>
+                  <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-400">
+                    <Phone size={13} />
+                    {member.phone || "No phone"}
+                  </p>
+                </div>
 
-        {/* Close */}
-        <button
-          onClick={onClose}
-          className="mt-4 text-sm text-gray-500 w-full"
-        >
-          Close
-        </button>
-
-      </Card>
+                <button
+                  type="button"
+                  onClick={() => assign(member.id)}
+                  disabled={isAdded || loadingId === member.id}
+                  className="inline-flex min-w-20 items-center justify-center gap-1.5 rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white disabled:bg-slate-200 disabled:text-slate-500"
+                >
+                  {isAdded ? <Check size={14} /> : <Plus size={14} />}
+                  {isAdded ? "Added" : loadingId === member.id ? "Adding" : "Add"}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
