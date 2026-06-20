@@ -19,11 +19,16 @@ import { Link, useParams } from "react-router-dom";
 import api from "../services/api";
 import PageShell, { PageHero, StatePanel } from "../components/layout/PageShell";
 import Skeleton from "../components/ui/Skeleton";
+import useGroupMeta, {
+  formatGroupDate,
+  resolveGroupCreatedAt,
+} from "../hooks/useGroupMeta";
 
 const EMPTY_OBJECT = {};
 
 export default function Dashboard() {
   const { groupId } = useParams();
+  const groupMeta = useGroupMeta();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [summary, setSummary] = useState(null);
@@ -105,8 +110,12 @@ export default function Dashboard() {
   const health = summary?.health ?? EMPTY_OBJECT;
   const resolvedMonth = selectedMonth || resolveDashboardMonth(summary);
   const displayGroup = useMemo(
-    () => ({ ...group, currentMonth: resolvedMonth }),
-    [group, resolvedMonth],
+    () => ({
+      ...groupMeta.group,
+      ...group,
+      currentMonth: resolvedMonth,
+    }),
+    [group, groupMeta.group, resolvedMonth],
   );
   const displayCollection = useMemo(
     () => collection,
@@ -191,10 +200,22 @@ export default function Dashboard() {
     });
   };
 
+  const createdLabel =
+    formatGroupDate(resolveGroupCreatedAt(displayGroup)) ||
+    groupMeta.createdLabel;
+  const pageSubtitle = groupId
+    ? [
+        displayGroup.name || groupMeta.displayName,
+        createdLabel ? `Created ${createdLabel}` : "",
+      ]
+        .filter(Boolean)
+        .join(" • ")
+    : "No group selected";
+
   return (
     <PageShell
       title="Dashboard"
-      subtitle={groupId ? group.name || `Group ${groupId}` : "No group selected"}
+      subtitle={pageSubtitle}
     >
       <PageHero
         eyebrow="Group command center"

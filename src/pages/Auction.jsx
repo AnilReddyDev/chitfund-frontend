@@ -4,9 +4,11 @@ import { useParams } from "react-router-dom";
 import api from "../services/api";
 import PageShell, { PageHero, StatePanel } from "../components/layout/PageShell";
 import Skeleton from "../components/ui/Skeleton";
+import useGroupMeta from "../hooks/useGroupMeta";
 
 export default function Auction() {
   const { groupId } = useParams();
+  const groupMeta = useGroupMeta();
 
   const [members, setMembers] = useState([]);
   const [allMembers, setAllMembers] = useState([]);
@@ -120,7 +122,7 @@ export default function Auction() {
   };
 
   return (
-    <PageShell title="Auction" subtitle={groupId ? `Group ${groupId}` : "No group selected"}>
+    <PageShell title="Auction" subtitle={groupMeta.subtitle}>
       <PageHero
         eyebrow="Monthly auction"
         title="Auction"

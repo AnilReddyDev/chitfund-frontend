@@ -1,6 +1,7 @@
 // src/components/group/GroupCard.jsx
 import { ArrowRight, CalendarDays, IndianRupee, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { formatGroupDate, resolveGroupCreatedAt } from "../../hooks/useGroupMeta";
 
 export default function GroupCard({ group }) {
   const navigate = useNavigate();
@@ -8,6 +9,7 @@ export default function GroupCard({ group }) {
   const premium = formatCurrency(group.monthlyPremium);
   const memberCount = group.totalMembers ?? group.membersCount ?? "-";
   const duration = group.duration ? `${group.duration} mo` : "-";
+  const createdLabel = formatGroupDate(resolveGroupCreatedAt(group));
 
   return (
     <button
@@ -23,6 +25,11 @@ export default function GroupCard({ group }) {
           <h2 className="mt-1 truncate text-lg font-semibold text-slate-950">
             {group.name || "Untitled group"}
           </h2>
+          {createdLabel && (
+            <p className="mt-1 text-xs font-medium text-slate-400">
+              Created {createdLabel}
+            </p>
+          )}
         </div>
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-700">
           <ArrowRight size={18} />

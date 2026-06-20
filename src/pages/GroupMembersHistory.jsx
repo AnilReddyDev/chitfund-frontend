@@ -8,9 +8,11 @@ import AssignMemberModal from "../components/group/AssignMemberModal";
 import FAB from "../components/ui/FAB";
 import Skeleton from "../components/ui/Skeleton";
 import PageShell, { PageHero, StatePanel } from "../components/layout/PageShell";
+import useGroupMeta from "../hooks/useGroupMeta";
 
 export default function GroupMemberHistory() {
   const { groupId } = useParams();
+  const groupMeta = useGroupMeta();
 
   const [members, setMembers] = useState([]);
   const [allMembers, setAllMembers] = useState([]);
@@ -83,7 +85,7 @@ export default function GroupMemberHistory() {
   }, [groupId]);
 
   return (
-    <PageShell title="Group Members" subtitle={groupId ? `Group ${groupId}` : "No group selected"}>
+    <PageShell title="Group Members" subtitle={groupMeta.subtitle}>
       <PageHero
         eyebrow="Group directory"
         title={`${members.length} Members`}

@@ -4,7 +4,6 @@ import {
   Routes,
   Route,
   Navigate,
-  useLocation,
 } from "react-router-dom";
 import { useContext } from "react";
 
@@ -40,11 +39,9 @@ function App() {
 }
 
 function AppRoutes({ isAuthenticated }) {
-  const location = useLocation();
-
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <Routes key={location.pathname}>
+      <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
 
@@ -61,7 +58,7 @@ function AppRoutes({ isAuthenticated }) {
           path="/group/:groupId"
           element={
             <ProtectedRoute>
-              <GroupMemberHistory />
+              <Navigate to="members" replace />
             </ProtectedRoute>
           }
         />

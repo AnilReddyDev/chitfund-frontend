@@ -1,15 +1,17 @@
 // src/pages/Ledger.jsx
 import { useEffect, useState } from "react";
-import { AlertCircle, Download, ListChecks } from "lucide-react";
+import { AlertCircle, ListChecks } from "lucide-react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
 import PaymentModal from "../components/ledger/PaymentModal";
 import LedgerExport from "../components/ledger/LedgerExport";
 import Skeleton from "../components/ui/Skeleton.jsx";
 import PageShell, { PageHero, StatePanel } from "../components/layout/PageShell";
+import useGroupMeta, { resolveGroupName } from "../hooks/useGroupMeta";
 
 export default function Ledger() {
   const { groupId } = useParams();
+  const groupMeta = useGroupMeta();
 
   const [members, setMembers] = useState([]);
   const [months, setMonths] = useState([]);
@@ -21,12 +23,7 @@ export default function Ledger() {
   const applyLedger = (payload) => {
     setMembers(Array.isArray(payload?.members) ? payload.members : []);
     setMonths(Array.isArray(payload?.months) ? payload.months : []);
-    setGroupName(
-      payload?.groupName ||
-        payload?.group?.name ||
-        payload?.name ||
-        "",
-    );
+    setGroupName(resolveGroupName(payload));
     setError("");
   };
 
@@ -77,8 +74,18 @@ export default function Ledger() {
     };
   }, [groupId]);
 
+  const displayGroupName = groupName || groupMeta.displayName;
+  const pageSubtitle = groupId
+    ? [
+        displayGroupName,
+        groupMeta.createdLabel ? `Created ${groupMeta.createdLabel}` : "",
+      ]
+        .filter(Boolean)
+        .join(" • ")
+    : "No group selected";
+
   return (
-    <PageShell title="Ledger" subtitle={groupId ? groupName || `Group ${groupId}` : "No group selected"}>
+    <PageShell title="Ledger" subtitle={pageSubtitle}>
       <PageHero
         eyebrow="Payment tracking"
         title="Ledger"
@@ -127,13 +134,11 @@ export default function Ledger() {
             </div>
             <LedgerExport
               groupId={groupId}
-              groupName={groupName}
+              groupName={displayGroupName}
+              group={groupMeta.group}
               members={members}
               months={months}
-            >
-              <Download size={16} />
-              CSV
-            </LedgerExport>
+            />
           </div>
 
           <div className="overflow-x-auto">
