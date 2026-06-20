@@ -78,7 +78,7 @@ export default function Ledger() {
   }, [groupId]);
 
   return (
-    <PageShell title="Ledger" subtitle={groupId ? `Group ${groupId}` : "No group selected"}>
+    <PageShell title="Ledger" subtitle={groupId ? groupName || `Group ${groupId}` : "No group selected"}>
       <PageHero
         eyebrow="Payment tracking"
         title="Ledger"

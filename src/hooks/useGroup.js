@@ -1,18 +1,19 @@
-import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 
 export default function useGroup() {
   const { groupId } = useParams();
+  const { pathname } = useLocation();
+  const pathGroupId = pathname.match(/^\/group\/([^/]+)/)?.[1];
+  const activeGroupId = groupId || pathGroupId;
 
-  // persist groupId
   useEffect(() => {
-    if (groupId) {
-      localStorage.setItem("groupId", groupId);
+    if (activeGroupId) {
+      localStorage.setItem("groupId", activeGroupId);
     }
-  }, [groupId]);
+  }, [activeGroupId]);
 
-  // fallback
   const stored = localStorage.getItem("groupId");
 
-  return groupId || stored;
+  return activeGroupId || stored;
 }
