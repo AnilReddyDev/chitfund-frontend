@@ -5,6 +5,8 @@ import api from "../services/api";
 import PageShell, { PageHero, StatePanel } from "../components/layout/PageShell";
 import Skeleton from "../components/ui/Skeleton";
 import useGroupMeta from "../hooks/useGroupMeta";
+import Can from "../components/auth/Can";
+import { PERMISSIONS } from "../utils/permissions";
 
 export default function Auction() {
   const { groupId } = useParams();
@@ -152,76 +154,78 @@ export default function Auction() {
 
       {groupId && !loading && !error && (
         <>
-          <section className="rounded-lg border border-white/20 bg-white p-4 shadow-sm">
-            <div className="mb-4 flex items-center gap-2">
-              <Gavel size={18} className="text-orange-600" />
-              <h2 className="text-sm font-semibold text-slate-950">
-                Record Auction
-              </h2>
-            </div>
+          <Can permissions={[PERMISSIONS.AUCTION_MANAGE]}>
+            <section className="rounded-lg border border-white/20 bg-white p-4 shadow-sm">
+              <div className="mb-4 flex items-center gap-2">
+                <Gavel size={18} className="text-orange-600" />
+                <h2 className="text-sm font-semibold text-slate-950">
+                  Record Auction
+                </h2>
+              </div>
 
-            <div className="space-y-3">
-              <Field label="Month">
-                <input
-                  type="number"
-                  value={month}
-                  className="field-input"
-                  placeholder="Enter month"
-                  onChange={(e) => setMonth(e.target.value)}
-                />
-              </Field>
-
-              <Field label="Winner">
-                <select
-                  value={winner}
-                  className="field-input"
-                  onChange={(e) => setWinner(e.target.value)}
-                >
-                  <option value="">Select winner</option>
-                  {members.map((member) => {
-                    const alreadyWon = wonMemberIds.has(member.memberId);
-                    const profile = memberMap[member.memberId];
-
-                    return (
-                      <option
-                        key={member.memberId}
-                        value={member.memberId}
-                        disabled={alreadyWon}
-                      >
-                        {profile?.name || `Member ${member.memberId}`}
-                        {alreadyWon ? " (Won)" : ""}
-                      </option>
-                    );
-                  })}
-                </select>
-              </Field>
-
-              <Field label="Bid Amount">
-                <div className="relative">
-                  <IndianRupee
-                    size={16}
-                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                  />
+              <div className="space-y-3">
+                <Field label="Month">
                   <input
                     type="number"
-                    value={bidAmount}
-                    className="field-input pl-9"
-                    placeholder="Enter bid amount"
-                    onChange={(e) => setBidAmount(e.target.value)}
+                    value={month}
+                    className="field-input"
+                    placeholder="Enter month"
+                    onChange={(e) => setMonth(e.target.value)}
                   />
-                </div>
-              </Field>
-            </div>
+                </Field>
 
-            <button
-              type="button"
-              onClick={handleAuction}
-              disabled={saving || members.length === 0}
-              className="mt-5 w-full rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:bg-slate-400"
-            >
-              {saving ? "Confirming..." : "Confirm Auction"}
-            </button>
-          </section>
+                <Field label="Winner">
+                  <select
+                    value={winner}
+                    className="field-input"
+                    onChange={(e) => setWinner(e.target.value)}
+                  >
+                    <option value="">Select winner</option>
+                    {members.map((member) => {
+                      const alreadyWon = wonMemberIds.has(member.memberId);
+                      const profile = memberMap[member.memberId];
+
+                      return (
+                        <option
+                          key={member.memberId}
+                          value={member.memberId}
+                          disabled={alreadyWon}
+                        >
+                          {profile?.name || `Member ${member.memberId}`}
+                          {alreadyWon ? " (Won)" : ""}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </Field>
+
+                <Field label="Bid Amount">
+                  <div className="relative">
+                    <IndianRupee
+                      size={16}
+                      className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    />
+                    <input
+                      type="number"
+                      value={bidAmount}
+                      className="field-input pl-9"
+                      placeholder="Enter bid amount"
+                      onChange={(e) => setBidAmount(e.target.value)}
+                    />
+                  </div>
+                </Field>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleAuction}
+                disabled={saving || members.length === 0}
+                className="mt-5 w-full rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:bg-slate-400"
+              >
+                {saving ? "Confirming..." : "Confirm Auction"}
+              </button>
+            </section>
+          </Can>
 
           <section className="mt-5">
             <div className="mb-3 flex items-center gap-2 text-white">

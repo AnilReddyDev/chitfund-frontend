@@ -5,12 +5,15 @@ import { authService } from "../services/auth";
 export const AppProvider = ({ children }) => {
   const storedToken = authService.getToken();
   const storedUser = storedToken ? authService.getUser() : null;
+  const storedRole = storedToken ? authService.getRole() : null;
   const [groups, setGroups] = useState([]);
   const [members, setMembers] = useState([]);
   const [groupId, setGroupId] = useState(null);
+  const [token, setToken] = useState(storedToken);
   const [user, setUser] = useState(storedUser);
+  const [role, setRole] = useState(storedRole);
   const [isAuthenticated, setIsAuthenticated] = useState(
-    Boolean(storedToken && storedUser),
+    Boolean(storedToken && storedUser && storedRole),
   );
   const loading = false;
 
@@ -29,6 +32,8 @@ export const AppProvider = ({ children }) => {
     try {
       const response = await authService.login(username, password);
       setUser({ username: response.username, role: response.role });
+      setToken(response.token);
+      setRole(response.role);
       setIsAuthenticated(true);
       return response;
     } catch (error) {
@@ -40,7 +45,9 @@ export const AppProvider = ({ children }) => {
   // 🔓 Logout
   const logout = () => {
     authService.logout();
+    setToken(null);
     setUser(null);
+    setRole(null);
     setIsAuthenticated(false);
     setGroups([]);
     setMembers([]);
@@ -56,7 +63,9 @@ export const AppProvider = ({ children }) => {
         addMember,
         groupId,
         setGroupId,
+        token,
         user,
+        role,
         isAuthenticated,
         login,
         logout,

@@ -1,16 +1,21 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AlertCircle, Phone, UserPlus, Users } from "lucide-react";
 import api from "../services/api";
 import FAB from "../components/ui/FAB";
 import AddMemberModal from "../components/member/AddMemberModal";
 import Skeleton from "../components/ui/Skeleton";
 import PageShell, { PageHero, StatePanel } from "../components/layout/PageShell";
+import Can from "../components/auth/Can";
+import { AppContext } from "../context/AppContext";
+import { PERMISSIONS, hasPermission } from "../utils/permissions";
 
 export default function MemberHistory() {
+  const { role } = useContext(AppContext);
   const [members, setMembers] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const canManageMembers = hasPermission(PERMISSIONS.MEMBER_MANAGE, role);
 
   const applyMembers = (data) => {
     setMembers(Array.isArray(data) ? data : []);
@@ -80,8 +85,8 @@ export default function MemberHistory() {
           icon={<UserPlus size={22} />}
           title="No members yet"
           message="Add members here first, then assign them to a group."
-          actionLabel="Add member"
-          onAction={() => setOpen(true)}
+          actionLabel={canManageMembers ? "Add member" : null}
+          onAction={canManageMembers ? () => setOpen(true) : undefined}
         />
       )}
 
@@ -111,7 +116,9 @@ export default function MemberHistory() {
         </div>
       )}
 
-      <FAB onClick={() => setOpen(true)} />
+      <Can permissions={[PERMISSIONS.MEMBER_MANAGE]}>
+        <FAB onClick={() => setOpen(true)} />
+      </Can>
 
       {open && (
         <AddMemberModal

@@ -1,0 +1,99 @@
+export const PERMISSIONS = {
+  DASHBOARD_VIEW: "DASHBOARD_VIEW",
+  GROUP_VIEW: "GROUP_VIEW",
+  GROUP_MANAGE: "GROUP_MANAGE",
+  MEMBER_VIEW: "MEMBER_VIEW",
+  MEMBER_MANAGE: "MEMBER_MANAGE",
+  PAYMENT_VIEW: "PAYMENT_VIEW",
+  PAYMENT_CREATE: "PAYMENT_CREATE",
+  AUCTION_VIEW: "AUCTION_VIEW",
+  AUCTION_MANAGE: "AUCTION_MANAGE",
+  REPORT_VIEW: "REPORT_VIEW",
+  REPORT_EXPORT: "REPORT_EXPORT",
+  AUDIT_VIEW: "AUDIT_VIEW",
+  USER_MANAGE: "USER_MANAGE",
+};
+
+export const ROLE_PERMISSIONS = {
+  OWNER: Object.values(PERMISSIONS),
+  MANAGER: [
+    PERMISSIONS.DASHBOARD_VIEW,
+    PERMISSIONS.GROUP_VIEW,
+    PERMISSIONS.GROUP_MANAGE,
+    PERMISSIONS.MEMBER_VIEW,
+    PERMISSIONS.MEMBER_MANAGE,
+    PERMISSIONS.PAYMENT_VIEW,
+    PERMISSIONS.PAYMENT_CREATE,
+    PERMISSIONS.AUCTION_VIEW,
+    PERMISSIONS.AUCTION_MANAGE,
+    PERMISSIONS.REPORT_VIEW,
+    PERMISSIONS.REPORT_EXPORT,
+    PERMISSIONS.AUDIT_VIEW,
+  ],
+  COLLECTOR: [
+    PERMISSIONS.DASHBOARD_VIEW,
+    PERMISSIONS.MEMBER_VIEW,
+    PERMISSIONS.PAYMENT_VIEW,
+    PERMISSIONS.PAYMENT_CREATE,
+  ],
+  ACCOUNTANT: [
+    PERMISSIONS.DASHBOARD_VIEW,
+    PERMISSIONS.REPORT_VIEW,
+    PERMISSIONS.REPORT_EXPORT,
+    PERMISSIONS.AUDIT_VIEW,
+  ],
+  VIEWER: [
+    PERMISSIONS.DASHBOARD_VIEW,
+    PERMISSIONS.GROUP_VIEW,
+    PERMISSIONS.MEMBER_VIEW,
+    PERMISSIONS.PAYMENT_VIEW,
+    PERMISSIONS.AUCTION_VIEW,
+    PERMISSIONS.REPORT_VIEW,
+  ],
+};
+
+const BACKEND_PERMISSION_ALIASES = {
+  VIEW_DASHBOARD: PERMISSIONS.DASHBOARD_VIEW,
+  MANAGE_GROUPS: PERMISSIONS.GROUP_MANAGE,
+  VIEW_GROUPS: PERMISSIONS.GROUP_VIEW,
+  MANAGE_MEMBERS: PERMISSIONS.MEMBER_MANAGE,
+  VIEW_MEMBERS: PERMISSIONS.MEMBER_VIEW,
+  RECORD_PAYMENTS: PERMISSIONS.PAYMENT_CREATE,
+  VIEW_PAYMENTS: PERMISSIONS.PAYMENT_VIEW,
+  MANAGE_AUCTIONS: PERMISSIONS.AUCTION_MANAGE,
+  VIEW_AUCTIONS: PERMISSIONS.AUCTION_VIEW,
+  VIEW_REPORTS: PERMISSIONS.REPORT_VIEW,
+  EXPORT_REPORTS: PERMISSIONS.REPORT_EXPORT,
+  VIEW_AUDIT_LOGS: PERMISSIONS.AUDIT_VIEW,
+  MANAGE_USERS: PERMISSIONS.USER_MANAGE,
+};
+
+export const ROLES = Object.freeze(Object.keys(ROLE_PERMISSIONS));
+
+export function normalizePermission(permission) {
+  return BACKEND_PERMISSION_ALIASES[permission] || permission;
+}
+
+export function hasPermission(permission, role = readStoredRole()) {
+  if (!permission || !role) return false;
+
+  const normalizedPermission = normalizePermission(permission);
+  return (ROLE_PERMISSIONS[role] || []).includes(normalizedPermission);
+}
+
+export function hasAnyPermission(permissions = [], role = readStoredRole()) {
+  if (!permissions.length) return true;
+  return permissions.some((permission) => hasPermission(permission, role));
+}
+
+export function readStoredRole() {
+  try {
+    const storedRole = localStorage.getItem("role");
+    if (storedRole) return storedRole;
+
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser)?.role : null;
+  } catch {
+    return null;
+  }
+}

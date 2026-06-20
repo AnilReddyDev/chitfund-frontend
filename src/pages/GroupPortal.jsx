@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AlertCircle, RefreshCw, Users } from "lucide-react";
 import api from "../services/api";
 import GroupCard from "../components/group/GroupCard";
@@ -6,12 +6,17 @@ import FAB from "../components/ui/FAB";
 import CreateGroupModal from "../components/group/CreateGroupModal";
 import Skeleton from "../components/ui/Skeleton";
 import PageShell, { PageHero, StatePanel } from "../components/layout/PageShell";
+import Can from "../components/auth/Can";
+import { AppContext } from "../context/AppContext";
+import { PERMISSIONS, hasPermission } from "../utils/permissions";
 
 export default function GroupPortal() {
+  const { role } = useContext(AppContext);
   const [groups, setGroups] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const canManageGroups = hasPermission(PERMISSIONS.GROUP_MANAGE, role);
 
   const applyGroupsResponse = (data) => {
     setGroups(Array.isArray(data) ? data : []);
@@ -86,8 +91,8 @@ export default function GroupPortal() {
           icon={<Users size={22} />}
           title="No groups yet"
           message="Create your first chit group to start adding members and tracking payments."
-          actionLabel="Create group"
-          onAction={() => setOpen(true)}
+          actionLabel={canManageGroups ? "Create group" : null}
+          onAction={canManageGroups ? () => setOpen(true) : undefined}
         />
       )}
 
@@ -99,7 +104,9 @@ export default function GroupPortal() {
         </div>
       )}
 
-      <FAB onClick={() => setOpen(true)} />
+      <Can permissions={[PERMISSIONS.GROUP_MANAGE]}>
+        <FAB onClick={() => setOpen(true)} />
+      </Can>
 
       {open && (
         <CreateGroupModal

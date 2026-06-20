@@ -14,11 +14,15 @@ import Auction from "./pages/Auction";
 import MemberHistory from "./pages/MemberHistory";
 import GroupMemberHistory from "./pages/GroupMembersHistory";
 import Login from "./pages/Login";
+import UserManagement from "./pages/UserManagement";
+import AuditLogs from "./pages/AuditLogs";
 
 import BottomNav from "./components/layout/BottomNav";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RoleGuard from "./components/auth/RoleGuard";
 import { Toaster } from "react-hot-toast";
 import { AppContext } from "./context/AppContext";
+import { PERMISSIONS } from "./utils/permissions";
 
 function App() {
   const { isAuthenticated, loading } = useContext(AppContext);
@@ -50,7 +54,9 @@ function AppRoutes({ isAuthenticated }) {
           path="/"
           element={
             <ProtectedRoute>
-              <GroupPortal />
+              <RoleGuard permissions={[PERMISSIONS.GROUP_VIEW]}>
+                <GroupPortal />
+              </RoleGuard>
             </ProtectedRoute>
           }
         />
@@ -66,7 +72,9 @@ function AppRoutes({ isAuthenticated }) {
           path="/group/:groupId/ledger"
           element={
             <ProtectedRoute>
-              <Ledger />
+              <RoleGuard permissions={[PERMISSIONS.REPORT_VIEW, PERMISSIONS.PAYMENT_VIEW]}>
+                <Ledger />
+              </RoleGuard>
             </ProtectedRoute>
           }
         />
@@ -74,7 +82,9 @@ function AppRoutes({ isAuthenticated }) {
           path="/group/:groupId/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <RoleGuard permissions={[PERMISSIONS.DASHBOARD_VIEW]}>
+                <Dashboard />
+              </RoleGuard>
             </ProtectedRoute>
           }
         />
@@ -82,7 +92,9 @@ function AppRoutes({ isAuthenticated }) {
           path="/group/:groupId/auction"
           element={
             <ProtectedRoute>
-              <Auction />
+              <RoleGuard permissions={[PERMISSIONS.AUCTION_VIEW]}>
+                <Auction />
+              </RoleGuard>
             </ProtectedRoute>
           }
         />
@@ -90,7 +102,9 @@ function AppRoutes({ isAuthenticated }) {
           path="/group/:groupId/members"
           element={
             <ProtectedRoute>
-              <GroupMemberHistory />
+              <RoleGuard permissions={[PERMISSIONS.MEMBER_VIEW]}>
+                <GroupMemberHistory />
+              </RoleGuard>
             </ProtectedRoute>
           }
         />
@@ -98,7 +112,29 @@ function AppRoutes({ isAuthenticated }) {
           path="/members"
           element={
             <ProtectedRoute>
-              <MemberHistory />
+              <RoleGuard permissions={[PERMISSIONS.MEMBER_VIEW]}>
+                <MemberHistory />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings/users"
+          element={
+            <ProtectedRoute>
+              <RoleGuard permissions={[PERMISSIONS.USER_MANAGE]}>
+                <UserManagement />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings/audit-logs"
+          element={
+            <ProtectedRoute>
+              <RoleGuard permissions={[PERMISSIONS.AUDIT_VIEW]}>
+                <AuditLogs />
+              </RoleGuard>
             </ProtectedRoute>
           }
         />

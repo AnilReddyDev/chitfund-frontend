@@ -1,5 +1,5 @@
 // src/pages/Ledger.jsx
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AlertCircle, ListChecks } from "lucide-react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
@@ -8,10 +8,15 @@ import LedgerExport from "../components/ledger/LedgerExport";
 import Skeleton from "../components/ui/Skeleton.jsx";
 import PageShell, { PageHero, StatePanel } from "../components/layout/PageShell";
 import useGroupMeta, { resolveGroupName } from "../hooks/useGroupMeta";
+import Can from "../components/auth/Can";
+import { AppContext } from "../context/AppContext";
+import { PERMISSIONS, hasPermission } from "../utils/permissions";
 
 export default function Ledger() {
+  const { role } = useContext(AppContext);
   const { groupId } = useParams();
   const groupMeta = useGroupMeta();
+  const canRecordPayment = hasPermission(PERMISSIONS.PAYMENT_CREATE, role);
 
   const [members, setMembers] = useState([]);
   const [months, setMonths] = useState([]);
@@ -89,7 +94,11 @@ export default function Ledger() {
       <PageHero
         eyebrow="Payment tracking"
         title="Ledger"
-        description="Tap any unpaid month cell to record a payment for the selected group."
+        description={
+          canRecordPayment
+            ? "Tap any unpaid month cell to record a payment for the selected group."
+            : "Review payment status and collection history for the selected group."
+        }
         icon={<ListChecks size={22} />}
       />
 
@@ -132,13 +141,15 @@ export default function Ledger() {
                 {members.length} members, {months.length} months
               </p>
             </div>
-            <LedgerExport
-              groupId={groupId}
-              groupName={displayGroupName}
-              group={groupMeta.group}
-              members={members}
-              months={months}
-            />
+            <Can permissions={[PERMISSIONS.REPORT_EXPORT]}>
+              <LedgerExport
+                groupId={groupId}
+                groupName={displayGroupName}
+                group={groupMeta.group}
+                members={members}
+                months={months}
+              />
+            </Can>
           </div>
 
           <div className="overflow-x-auto">
@@ -172,6 +183,7 @@ export default function Ledger() {
                           type="button"
                           disabled={payment.paid}
                           onClick={() =>
+                            canRecordPayment &&
                             setSelectedCell({
                               memberId: member.memberId,
                               month: payment.month,
@@ -180,6 +192,8 @@ export default function Ledger() {
                           className={`h-9 w-full rounded-lg border text-sm font-semibold transition ${
                             payment.paid
                               ? "cursor-default border-emerald-200 bg-emerald-50 text-emerald-700"
+                              : !canRecordPayment
+                                ? "cursor-default border-slate-200 bg-slate-50 text-slate-300"
                               : "border-slate-200 bg-white text-slate-300 active:scale-[0.98]"
                           }`}
                         >
@@ -195,7 +209,7 @@ export default function Ledger() {
         </section>
       )}
 
-      {selectedCell && (
+      {selectedCell && canRecordPayment && (
         <PaymentModal
           memberId={selectedCell.memberId}
           month={selectedCell.month}

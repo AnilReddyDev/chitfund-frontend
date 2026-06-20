@@ -17,9 +17,9 @@ export const authService = {
       });
       const { token, username: user, role } = response.data;
 
-      // Store token and user info in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify({ username: user, role }));
+      localStorage.setItem("role", role);
 
       return { token, username: user, role };
     } catch (error) {
@@ -31,11 +31,16 @@ export const authService = {
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("role");
   },
 
   // Get stored token
   getToken: () => {
     return localStorage.getItem("token");
+  },
+
+  getRole: () => {
+    return localStorage.getItem("role") || authService.getUser()?.role || null;
   },
 
   // Get stored user info

@@ -1,6 +1,6 @@
 // src/pages/GroupMemberHistory.jsx
 
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { AlertCircle, Phone, UserPlus, Users } from "lucide-react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
@@ -9,8 +9,12 @@ import FAB from "../components/ui/FAB";
 import Skeleton from "../components/ui/Skeleton";
 import PageShell, { PageHero, StatePanel } from "../components/layout/PageShell";
 import useGroupMeta from "../hooks/useGroupMeta";
+import Can from "../components/auth/Can";
+import { AppContext } from "../context/AppContext";
+import { PERMISSIONS, hasPermission } from "../utils/permissions";
 
 export default function GroupMemberHistory() {
+  const { role } = useContext(AppContext);
   const { groupId } = useParams();
   const groupMeta = useGroupMeta();
 
@@ -19,6 +23,7 @@ export default function GroupMemberHistory() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const canManageMembers = hasPermission(PERMISSIONS.MEMBER_MANAGE, role);
 
   const memberMap = useMemo(() => {
     return Object.fromEntries(allMembers.map((member) => [member.id, member]));
@@ -118,8 +123,8 @@ export default function GroupMemberHistory() {
           icon={<UserPlus size={22} />}
           title="No members assigned"
           message="Assign members to this group to begin payments and auctions."
-          actionLabel="Assign member"
-          onAction={() => setOpen(true)}
+          actionLabel={canManageMembers ? "Assign member" : null}
+          onAction={canManageMembers ? () => setOpen(true) : undefined}
         />
       )}
 
@@ -153,7 +158,9 @@ export default function GroupMemberHistory() {
         </div>
       )}
 
-      <FAB onClick={() => setOpen(true)} />
+      <Can permissions={[PERMISSIONS.MEMBER_MANAGE]}>
+        <FAB onClick={() => setOpen(true)} />
+      </Can>
 
       {open && (
         <AssignMemberModal

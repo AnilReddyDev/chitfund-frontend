@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ChitFund User Onboarding Guide</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.55;
+        color: #0f172a;
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 36px;
+        background: #fff;
+      }
+
+      h1 {
+        font-size: 34px;
+        margin: 0 0 8px;
+        color: #111827;
+      }
+
+      h2 {
+        font-size: 24px;
+        margin-top: 34px;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 8px;
+        color: #111827;
+      }
+
+      h3 {
+        font-size: 18px;
+        margin-top: 24px;
+        color: #1f2937;
+      }
+
+      p {
+        margin: 10px 0;
+      }
+
+      ul,
+      ol {
+        padding-left: 24px;
+      }
+
+      li {
+        margin: 6px 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 14px 0 22px;
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        border: 1px solid #e5e7eb;
+        padding: 8px 10px;
+        vertical-align: top;
+      }
+
+      th {
+        background: #f8fafc;
+        text-align: left;
+      }
+
+      code {
+        background: #f1f5f9;
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      pre {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 14px;
+        border-radius: 8px;
+        overflow: auto;
+      }
+
+      .cover {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 24px;
+        margin-bottom: 28px;
+        background: #f8fafc;
+      }
+
+      .cover p {
+        color: #475569;
+      }
+
+      @media print {
+        body {
+          padding: 20px;
+          max-width: none;
+        }
+
+        h2 {
+          break-after: avoid;
+        }
+
+        table,
+        pre {
+          break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cover">
+      <h1>ChitFund User Onboarding Guide</h1>
+      <p>A beginner-friendly guide for learning the application workflow, features, roles, and daily usage.</p>
+    </div>
+    <p>Beginner-friendly guide for using the ChitFund application.</p><h2>1. What This Application Does</h2><p>ChitFund helps you manage chit fund operations in one place.</p><p>You can use it to:</p><ul><li>Create chit groups.</li><li>Add members.</li><li>Assign members to groups.</li><li>Track monthly payments.</li><li>Record auction winners.</li><li>View group progress on the dashboard.</li><li>Export ledger reports.</li><li>Manage users and roles.</li><li>Review audit logs of important activity.</li></ul><p>The application is designed for daily operational use by owners, managers, collectors, accountants, and viewers.</p><h2>2. Basic Words Used in the App</h2><table><thead><tr><th>Word</th><th>Meaning</th></tr></thead><tbody><tr><td>Group</td><td>A chit fund group with amount, monthly premium, members, and duration.</td></tr><tr><td>Member</td><td>A person who participates in chit groups.</td></tr><tr><td>Group Member</td><td>A saved member assigned to a specific chit group.</td></tr><tr><td>Ledger</td><td>The month-by-month payment table for a group.</td></tr><tr><td>Payment</td><td>A monthly amount paid by a member.</td></tr><tr><td>Auction</td><td>The monthly selection of a winning member and bid details.</td></tr><tr><td>Dashboard</td><td>A summary screen showing collections, pending dues, auction status, and health.</td></tr><tr><td>Export</td><td>Downloading data as Excel or CSV.</td></tr><tr><td>Audit Log</td><td>A record of important actions performed in the system.</td></tr><tr><td>Role</td><td>The type of access a user has.</td></tr></tbody></table><h2>3. User Roles</h2><p>Every user has a role. The role controls which screens and actions are visible.</p><p>The backend is the final security authority. The frontend hides unavailable actions to make the app easier to use.</p><table><thead><tr><th>Role</th><th>What They Can Usually Do</th></tr></thead><tbody><tr><td>OWNER</td><td>Full access. Can manage users, view audit logs, manage groups, members, payments, auctions, and exports.</td></tr><tr><td>MANAGER</td><td>Can manage day-to-day operations like groups, members, payments, auctions, reports, exports, and audit logs.</td></tr><tr><td>COLLECTOR</td><td>Can view members and payments, and record payments. Cannot manage users, audit logs, or exports.</td></tr><tr><td>ACCOUNTANT</td><td>Can view reports, export reports, and view audit logs. Cannot manage auctions.</td></tr><tr><td>VIEWER</td><td>Read-only access to operational screens. Cannot create, edit, delete, record payments, or export.</td></tr></tbody></table><p>If you do not see a button or menu item, your role may not have permission for it.</p><h2>4. Logging In</h2><ol><li>Open the ChitFund application.</li><li>You will be taken to the login page if you are not already signed in.</li><li>Enter your username and password.</li><li>Click the login button.</li><li>After login, you will see the main application screens based on your role.</li></ol><p>If login fails:</p><ul><li>Check that the username and password are correct.</li><li>Ask the owner to confirm that your user account is active.</li><li>If your session expires, log in again.</li></ul><h2>5. Understanding the Main Navigation</h2><p>The bottom navigation shows the screens you can access.</p><p>Common navigation items:</p><ul><li>Groups</li><li>Ledger</li><li>Dashboard</li><li>Members</li><li>Auction</li><li>Audit</li><li>Users</li></ul><p>Some items appear only for certain roles. For example:</p><ul><li>Only owners see user management.</li><li>Collectors do not see audit logs or exports.</li><li>Accountants do not see auction management.</li></ul><h2>6. First-Time Setup Flow</h2><p>If you are setting up the app from the beginning, follow this order:</p><ol><li>Log in as an owner.</li><li>Create users for your team.</li><li>Create a chit group.</li><li>Add members to the member directory.</li><li>Assign members to the group.</li><li>Use the dashboard to review the group.</li><li>Record monthly payments in the ledger.</li><li>Record auctions when they happen.</li><li>Export reports when needed.</li><li>Review audit logs for important activity.</li></ol><h2>7. Creating a Chit Group</h2><p>Used by: Owner or Manager.</p><ol><li>Open the Groups screen.</li><li>Click the plus button.</li><li>Fill in the group details:</li></ol><p>- Group Name</p><p>- Total Amount</p><p>- Monthly Premium</p><p>- Number of Members</p><p>- Duration</p><p>- Payment Start Month</p><ol><li>Click Create Group.</li><li>The group will appear in the group list.</li></ol><p>Tips:</p><ul><li>Use a clear group name, such as <code>Sankranti Chitti 2026</code>.</li><li>Make sure duration and member count match your actual chit plan.</li><li>After creating a group, assign members before using the ledger fully.</li></ul><h2>8. Opening a Group</h2><ol><li>Go to the Groups screen.</li><li>Tap a group card.</li><li>The app opens the selected group area.</li><li>You can then use group-specific screens:</li></ol><p>- Members</p><p>- Ledger</p><p>- Dashboard</p><p>- Auction</p><p>The app remembers the most recently opened group for bottom navigation.</p><h2>9. Adding Members</h2><p>Used by: Owner or Manager.</p><ol><li>Open the Members screen.</li><li>Click the plus button.</li><li>Enter the member name.</li><li>Enter the phone number if available.</li><li>Click Add Member.</li></ol><p>This creates a member in the shared member directory. A member in the directory is not automatically part of every group.</p><h2>10. Assigning Members to a Group</h2><p>Used by: Owner or Manager.</p><ol><li>Open a group.</li><li>Go to the group Members screen.</li><li>Click the plus button.</li><li>Choose saved members from the list.</li><li>Add the required members to the group.</li></ol><p>After assignment:</p><ul><li>Members appear in the group member list.</li><li>The ledger can show payment rows for those members.</li><li>Auctions can use eligible group members.</li></ul><h2>11. Using the Ledger</h2><p>The Ledger is the payment tracking screen for a selected group.</p><ol><li>Open a group.</li><li>Go to Ledger.</li><li>You will see a payment matrix:</li></ol><p>- Rows are members.</p><p>- Columns are months.</p><p>- Paid cells show <code>Paid</code>.</p><p>- Unpaid cells show <code>-</code>.</p><h3>Recording a Payment</h3><p>Used by: Owner, Manager, or Collector.</p><ol><li>In the Ledger screen, find the member row.</li><li>Find the unpaid month column.</li><li>Tap the unpaid cell.</li><li>Enter payment details in the payment modal.</li><li>Save the payment.</li><li>The cell becomes paid after the ledger refreshes.</li></ol><p>Notes:</p><ul><li>Paid cells cannot be clicked again.</li><li>Payments are controlled by backend rules, so duplicate payments may be rejected.</li><li>If you cannot click unpaid cells, your role may not allow payment recording.</li></ul><h2>12. Exporting Ledger Reports</h2><p>Used by: Owner, Manager, or Accountant.</p><ol><li>Open a group.</li><li>Go to Ledger.</li><li>Click Excel or CSV in the ledger header.</li></ol><p>Excel export is best for accounting and review. It includes multiple sheets:</p><ul><li>Summary</li><li>Member Ledger</li><li>Payment Matrix</li><li>Transaction History</li><li>Monthly Collection</li></ul><p>CSV export is lighter and useful for quick sharing.</p><p>If export buttons are not visible, your role may not have export permission.</p><h2>13. Using the Dashboard</h2><p>The Dashboard gives a quick operational summary for a selected group.</p><p>Open a group, then go to Dashboard.</p><p>You can review:</p><ul><li>Current month status.</li><li>Collection progress.</li><li>Total collected amount.</li><li>Total profit.</li><li>Member count.</li><li>Group health.</li><li>Pending payments.</li><li>Overdue members.</li><li>Auction status.</li><li>Quick action shortcuts.</li></ul><p>Some dashboard widgets are hidden if your role does not have permission for that area.</p><h2>14. Recording an Auction</h2><p>Used by: Owner or Manager.</p><ol><li>Open a group.</li><li>Go to Auction.</li><li>Enter the auction month.</li><li>Select the winning member.</li><li>Enter the bid amount.</li><li>Click Confirm Auction.</li></ol><p>After saving:</p><ul><li>The auction appears in Auction History.</li><li>Dashboard auction metrics update after refresh.</li><li>The backend records the event for audit history.</li></ul><p>If you can see auction history but not the record form, your role likely has view permission but not management permission.</p><h2>15. Managing Users</h2><p>Used by: Owner only.</p><p>Route:</p><pre><code>/settings/users</code></pre><p>The Users screen helps owners manage who can access the application.</p><p>You can:</p><ul><li>View all users.</li><li>Search users.</li><li>Filter by role.</li><li>Create a user.</li><li>Edit a user's role.</li><li>Activate or deactivate a user.</li><li>Move through pages of users.</li></ul><h3>Creating a User</h3><ol><li>Go to Users.</li><li>Click Create.</li><li>Enter name, email, password, and role.</li><li>Click Create User.</li></ol><h3>Editing a User</h3><ol><li>Go to Users.</li><li>Find the user in the table.</li><li>Click the edit button.</li><li>Change the role.</li><li>Save changes.</li></ol><h3>Deactivating a User</h3><ol><li>Go to Users.</li><li>Find the user.</li><li>Click the status toggle.</li><li>The user becomes inactive.</li></ol><p>Inactive users should not be able to continue using the application.</p><h2>16. Viewing Audit Logs</h2><p>Used by: Owner, Manager, or Accountant.</p><p>Route:</p><pre><code>/settings/audit-logs</code></pre><p>Audit logs show important actions in the system.</p><p>You can filter by:</p><ul><li>Search text.</li><li>User.</li><li>Date range.</li><li>Entity type.</li><li>Action type.</li></ul><p>Audit table columns include:</p><ul><li>Timestamp</li><li>User</li><li>Role</li><li>Action</li><li>Entity Type</li><li>Entity ID</li><li>IP Address</li></ul><p>Click a row to open the details drawer.</p><p>The details drawer shows:</p><ul><li>Before changes.</li><li>After changes.</li><li>Added fields.</li><li>Updated fields.</li><li>Removed fields.</li><li>User agent, when available.</li></ul><p>Audit logs are read-only. They cannot be edited or deleted from the frontend.</p><h2>17. Exporting Audit Logs</h2><p>Used by: Owner, Manager, or Accountant.</p><ol><li>Go to Audit Logs.</li><li>Apply any filters you need.</li><li>Click Export Excel.</li><li>The exported file includes the active filters.</li></ol><p>Use this for compliance review, investigation, or operational reporting.</p><h2>18. Common Daily Workflows</h2><h3>Daily Collection Workflow</h3><p>Best for: Collector or Manager.</p><ol><li>Log in.</li><li>Open the correct group.</li><li>Go to Dashboard.</li><li>Check pending members.</li><li>Go to Ledger.</li><li>Record payments for collected members.</li><li>Return to Dashboard to confirm progress.</li></ol><h3>Month-End Accounting Workflow</h3><p>Best for: Accountant or Owner.</p><ol><li>Open the group.</li><li>Review Dashboard totals.</li><li>Open Ledger.</li><li>Export the Excel ledger.</li><li>Review pending and overdue members.</li><li>Open Audit Logs if activity verification is needed.</li><li>Export audit logs if required.</li></ol><h3>New Group Setup Workflow</h3><p>Best for: Owner or Manager.</p><ol><li>Create the group.</li><li>Add members to the member directory.</li><li>Assign members to the group.</li><li>Open Dashboard to confirm member count.</li><li>Start recording payments from the first month.</li></ol><h3>Auction Workflow</h3><p>Best for: Owner or Manager.</p><ol><li>Open the group.</li><li>Review payment status in Ledger.</li><li>Go to Auction.</li><li>Select eligible winner.</li><li>Enter bid amount.</li><li>Confirm auction.</li><li>Review Auction History and Dashboard.</li></ol><h2>19. Troubleshooting</h2><h3>I cannot see a menu item</h3><p>Your role may not have permission for that feature. Ask the owner to check your role.</p><h3>I cannot create a group or member</h3><p>You may have view-only access. Creation actions require management permissions.</p><h3>I cannot record a payment</h3><p>Payment recording requires payment create permission. Also, already-paid cells cannot be edited from the ledger.</p><h3>I cannot export reports</h3><p>Exports require report export permission. Collectors and viewers usually cannot export.</p><h3>I see "Access denied"</h3><p>You opened a route that your role cannot access. Return to an allowed screen or ask the owner for access.</p><h3>Data did not update immediately</h3><p>Try refreshing the page or using the Retry button if the app shows an error state.</p><h3>My login stopped working</h3><p>Your session may have expired, your token may be invalid, or your account may have been deactivated. Log in again or contact the owner.</p><h2>20. Best Practices</h2><ul><li>Create users with the minimum role they need.</li><li>Keep member names and phone numbers accurate.</li><li>Assign members to the correct group before recording payments.</li><li>Review the dashboard before and after major updates.</li><li>Export Excel reports for accounting records.</li><li>Review audit logs for sensitive operations.</li><li>Deactivate users who should no longer access the system.</li><li>Do not share passwords.</li></ul><h2>21. Quick Reference</h2><table><thead><tr><th>Task</th><th>Screen</th><th>Permission Usually Needed</th></tr></thead><tbody><tr><td>Create group</td><td>Groups</td><td>Group management</td></tr><tr><td>Add member</td><td>Members</td><td>Member management</td></tr><tr><td>Assign member to group</td><td>Group Members</td><td>Member management</td></tr><tr><td>Record payment</td><td>Ledger</td><td>Payment create</td></tr><tr><td>Export ledger</td><td>Ledger</td><td>Report export</td></tr><tr><td>View dashboard</td><td>Dashboard</td><td>Dashboard view</td></tr><tr><td>Record auction</td><td>Auction</td><td>Auction management</td></tr><tr><td>Manage users</td><td>Users</td><td>User management</td></tr><tr><td>View audit logs</td><td>Audit Logs</td><td>Audit view</td></tr><tr><td>Export audit logs</td><td>Audit Logs</td><td>Audit view</td></tr></tbody></table><h2>22. Who To Contact</h2><p>If you are unsure what to do:</p><ol><li>Ask your manager or application owner.</li><li>Share the screen name and what you were trying to do.</li><li>Mention any error message you saw.</li><li>If it is an access issue, ask the owner to review your role.</li></ol>
+  </body>
+</html>

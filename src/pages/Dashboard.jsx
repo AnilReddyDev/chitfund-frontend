@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
   ArrowRight,
@@ -23,10 +23,13 @@ import useGroupMeta, {
   formatGroupDate,
   resolveGroupCreatedAt,
 } from "../hooks/useGroupMeta";
+import { AppContext } from "../context/AppContext";
+import { PERMISSIONS, hasPermission } from "../utils/permissions";
 
 const EMPTY_OBJECT = {};
 
 export default function Dashboard() {
+  const { role } = useContext(AppContext);
   const { groupId } = useParams();
   const groupMeta = useGroupMeta();
   const [loading, setLoading] = useState(true);
@@ -142,6 +145,7 @@ export default function Dashboard() {
         detail: "Collect this month's premium",
         to: `/group/${groupId}/ledger`,
         tone: "amber",
+        permission: PERMISSIONS.PAYMENT_VIEW,
       });
     }
 
@@ -151,6 +155,7 @@ export default function Dashboard() {
         detail: "Review missed previous months",
         to: `/group/${groupId}/ledger`,
         tone: "red",
+        permission: PERMISSIONS.PAYMENT_VIEW,
       });
     }
 
@@ -160,6 +165,7 @@ export default function Dashboard() {
         detail: "Complete auction for the selected month",
         to: `/group/${groupId}/auction`,
         tone: "amber",
+        permission: PERMISSIONS.AUCTION_VIEW,
       });
     }
 
@@ -169,6 +175,7 @@ export default function Dashboard() {
         detail: "Fill remaining member slots",
         to: `/group/${groupId}/members`,
         tone: "slate",
+        permission: PERMISSIONS.MEMBER_VIEW,
       });
     }
 
@@ -178,11 +185,16 @@ export default function Dashboard() {
         detail: "No immediate admin action needed",
         to: `/group/${groupId}/ledger`,
         tone: "green",
+        permission: PERMISSIONS.PAYMENT_VIEW,
       });
     }
 
     return items;
   }, [displayAuction, displayGroup, groupId, resolvedMonth, summary]);
+  const visibleAttentionItems = useMemo(
+    () => attentionItems.filter((item) => hasPermission(item.permission, role)),
+    [attentionItems, role],
+  );
 
   const canMovePrevious = Number(resolvedMonth || 0) > 1;
   const canMoveNext =
@@ -257,7 +269,7 @@ export default function Dashboard() {
 
           <MonthlySummary group={displayGroup} collection={displayCollection} />
 
-          <NeedsAttention items={attentionItems} />
+          <NeedsAttention items={visibleAttentionItems} />
 
           <div className="grid grid-cols-2 gap-3">
             <MetricCard
@@ -275,16 +287,20 @@ export default function Dashboard() {
               title="Members"
               value={`${displayGroup.assignedMembers || 0}/${displayGroup.totalMembers || 0}`}
             />
-            <MetricCard
-              icon={<Gavel size={18} />}
-              title="Eligible Auctions"
-              value={displayAuction.nextAuction?.eligibleMembers ?? 0}
-            />
+            {hasPermission(PERMISSIONS.AUCTION_VIEW, role) && (
+              <MetricCard
+                icon={<Gavel size={18} />}
+                title="Eligible Auctions"
+                value={displayAuction.nextAuction?.eligibleMembers ?? 0}
+              />
+            )}
           </div>
 
           <HealthCard health={health} />
 
-          <AuctionSnapshot auction={displayAuction} group={displayGroup} />
+          {hasPermission(PERMISSIONS.AUCTION_VIEW, role) && (
+            <AuctionSnapshot auction={displayAuction} group={displayGroup} />
+          )}
 
           <MonthBreakdown
             group={displayGroup}
@@ -308,7 +324,7 @@ export default function Dashboard() {
             variant="overdue"
           />
 
-          <QuickActions groupId={groupId} />
+          <QuickActions groupId={groupId} role={role} />
         </div>
       )}
     </PageShell>
@@ -677,27 +693,32 @@ function BreakdownRow({ label, value, helper, tone }) {
   );
 }
 
-function QuickActions({ groupId }) {
+function QuickActions({ groupId, role }) {
   const actions = [
     {
       label: "Open Ledger",
       helper: "Collect or verify payments",
       icon: <ReceiptText size={18} />,
       to: `/group/${groupId}/ledger`,
+      permission: PERMISSIONS.PAYMENT_VIEW,
     },
     {
       label: "Run Auction",
       helper: "Complete selected month auction",
       icon: <Gavel size={18} />,
       to: `/group/${groupId}/auction`,
+      permission: PERMISSIONS.AUCTION_VIEW,
     },
     {
       label: "Manage Members",
       helper: "Assign missing group members",
       icon: <Users size={18} />,
       to: `/group/${groupId}/members`,
+      permission: PERMISSIONS.MEMBER_VIEW,
     },
-  ];
+  ].filter((action) => hasPermission(action.permission, role));
+
+  if (actions.length === 0) return null;
 
   return (
     <section className="rounded-lg border border-white/20 bg-white p-4 shadow-sm">
