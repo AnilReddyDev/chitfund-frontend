@@ -11,7 +11,7 @@ import { AppContext } from "../context/AppContext";
 import { PERMISSIONS, hasPermission } from "../utils/permissions";
 
 export default function GroupPortal() {
-  const { role } = useContext(AppContext);
+  const { role, t } = useContext(AppContext);
   const [groups, setGroups] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function GroupPortal() {
       applyGroupsResponse(res.data);
     } catch (err) {
       console.error("Error fetching groups", err);
-      setError("Could not load groups. Please try again.");
+      setError(t("groupsLoadError"));
     } finally {
       setLoading(false);
     }
@@ -49,7 +49,7 @@ export default function GroupPortal() {
       .catch((err) => {
         if (!active) return;
         console.error("Error fetching groups", err);
-        setError("Could not load groups. Please try again.");
+        setError(t("groupsLoadError"));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -58,14 +58,14 @@ export default function GroupPortal() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   return (
-    <PageShell title="Groups" subtitle={`${groups.length} active groups`}>
+    <PageShell title={t("groups")} subtitle={t("activeGroups", { count: groups.length })}>
       <PageHero
-        eyebrow="Chit fund workspace"
-        title="Manage Groups"
-        description="Track amount, members, premium, and auction duration in one place."
+        eyebrow={t("chitWorkspace")}
+        title={t("manageGroups")}
+        description={t("manageGroupsDesc")}
         icon={<Users size={22} />}
       />
 
@@ -74,12 +74,12 @@ export default function GroupPortal() {
       {!loading && error && (
         <StatePanel
           icon={<AlertCircle size={22} />}
-          title="Unable to load groups"
+          title={t("unableLoadGroups")}
           message={error}
           actionLabel={
             <>
               <RefreshCw size={16} />
-              Retry
+              {t("retry")}
             </>
           }
           onAction={fetchGroups}
@@ -89,9 +89,9 @@ export default function GroupPortal() {
       {!loading && !error && groups.length === 0 && (
         <StatePanel
           icon={<Users size={22} />}
-          title="No groups yet"
-          message="Create your first chit group to start adding members and tracking payments."
-          actionLabel={canManageGroups ? "Create group" : null}
+          title={t("noGroups")}
+          message={t("noGroupsMessage")}
+          actionLabel={canManageGroups ? t("createGroup") : null}
           onAction={canManageGroups ? () => setOpen(true) : undefined}
         />
       )}

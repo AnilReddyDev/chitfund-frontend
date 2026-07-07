@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Download, FileSpreadsheet } from "lucide-react";
+import { AppContext } from "../../context/AppContext";
 
 const CURRENCY_FORMAT = '"₹"#,##0';
 const DATE_FORMAT = "dd-mmm-yyyy";
@@ -16,16 +17,17 @@ export default function LedgerExport({
   members = [],
   months = [],
 }) {
+  const { t } = useContext(AppContext);
   const [exporting, setExporting] = useState(false);
 
   const assertExportable = () => {
     if (!groupId) {
-      alert("Select a group first");
+      alert(t("selectGroupLedgerError"));
       return false;
     }
 
     if (!members.length || !months.length) {
-      alert("No ledger data available to export");
+      alert(t("noLedgerRows"));
       return false;
     }
 
@@ -55,7 +57,7 @@ export default function LedgerExport({
       );
     } catch (err) {
       console.error("Error exporting ledger workbook", err);
-      alert("Could not export Excel report. Please try again.");
+      alert(t("ledgerLoadError"));
     } finally {
       setExporting(false);
     }
@@ -80,7 +82,7 @@ export default function LedgerExport({
         className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-400"
       >
         <FileSpreadsheet size={16} />
-        {exporting ? "Exporting..." : "Excel"}
+        {exporting ? t("exporting") : t("excel")}
       </button>
       <button
         type="button"
@@ -89,7 +91,7 @@ export default function LedgerExport({
         className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 disabled:cursor-not-allowed disabled:text-slate-400"
       >
         <Download size={16} />
-        CSV
+        {t("csv")}
       </button>
     </div>
   );

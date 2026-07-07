@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { IndianRupee, X } from "lucide-react";
 import api from "../../services/api";
 import toast from "react-hot-toast";
+import { AppContext } from "../../context/AppContext";
 
 export default function PaymentModal({
   memberId,
@@ -10,13 +11,14 @@ export default function PaymentModal({
   onClose,
   onSuccess,
 }) {
+  const { t } = useContext(AppContext);
   const [amount, setAmount] = useState("");
   const [mode, setMode] = useState("CASH");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (!amount) {
-      return toast.error("Enter amount");
+      return toast.error(t("enterAmount"));
     }
 
     try {
@@ -30,12 +32,12 @@ export default function PaymentModal({
         paymentMode: mode,
       });
 
-      toast.success("Payment recorded");
+      toast.success(t("paymentRecorded"));
       await onSuccess();
       onClose();
     } catch (err) {
       console.error("Error recording payment", err);
-      toast.error("Already paid or error");
+      toast.error(t("alreadyPaidOrError"));
     } finally {
       setLoading(false);
     }
@@ -47,10 +49,10 @@ export default function PaymentModal({
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-orange-600">
-              Month {month}
+              {t("month")} {month}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-slate-950">
-              Collect Payment
+              {t("payment")}
             </h2>
           </div>
           <button
@@ -67,12 +69,12 @@ export default function PaymentModal({
           <label className="block">
             <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-500">
               <IndianRupee size={16} />
-              Amount
+              {t("amount")}
             </span>
             <input
               type="number"
               value={amount}
-              placeholder="Amount"
+              placeholder={t("amount")}
               className="field-input"
               onChange={(e) => setAmount(e.target.value)}
             />
@@ -80,16 +82,16 @@ export default function PaymentModal({
 
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium text-slate-500">
-              Payment Mode
+              {t("mode")}
             </span>
             <select
               value={mode}
               className="field-input"
               onChange={(e) => setMode(e.target.value)}
             >
-              <option value="CASH">Cash</option>
+              <option value="CASH">{t("cash")}</option>
               <option value="UPI">UPI</option>
-              <option value="BANK">Bank</option>
+              <option value="BANK">{t("bank")}</option>
             </select>
           </label>
         </div>
@@ -100,7 +102,7 @@ export default function PaymentModal({
           disabled={loading}
           className="mt-5 w-full rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:bg-slate-400"
         >
-          {loading ? "Processing..." : "Confirm"}
+          {loading ? t("processing") : t("confirm")}
         </button>
       </div>
     </div>

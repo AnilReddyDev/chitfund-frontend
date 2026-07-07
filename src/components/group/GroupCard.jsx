@@ -1,9 +1,12 @@
 // src/components/group/GroupCard.jsx
+import { useContext } from "react";
 import { ArrowRight, CalendarDays, IndianRupee, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { formatGroupDate, resolveGroupCreatedAt } from "../../hooks/useGroupMeta";
+import { AppContext } from "../../context/AppContext";
 
 export default function GroupCard({ group }) {
+  const { t } = useContext(AppContext);
   const navigate = useNavigate();
   const totalAmount = formatCurrency(group.totalAmount);
   const premium = formatCurrency(group.monthlyPremium);
@@ -20,14 +23,14 @@ export default function GroupCard({ group }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-            Group
+            {t("group")}
           </p>
           <h2 className="mt-1 truncate text-lg font-semibold text-slate-950">
             {group.name || "Untitled group"}
           </h2>
           {createdLabel && (
             <p className="mt-1 text-xs font-medium text-slate-400">
-              Created {createdLabel}
+              {t("created")} {createdLabel}
             </p>
           )}
         </div>
@@ -37,14 +40,14 @@ export default function GroupCard({ group }) {
       </div>
 
       <div className="mt-5 grid grid-cols-3 gap-2">
-        <Metric icon={<IndianRupee size={15} />} label="Amount" value={totalAmount} />
-        <Metric icon={<Users size={15} />} label="Members" value={memberCount} />
-        <Metric icon={<CalendarDays size={15} />} label="Duration" value={duration} />
+        <Metric icon={<IndianRupee size={15} />} label={t("amountLabel")} value={totalAmount} />
+        <Metric icon={<Users size={15} />} label={t("members")} value={memberCount} />
+        <Metric icon={<CalendarDays size={15} />} label={t("duration")} value={duration} />
       </div>
 
       {group.monthlyPremium != null && (
         <div className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-          Monthly premium: <span className="font-semibold">{premium}</span>
+          {t("monthlyPremiumLabel")}: <span className="font-semibold">{premium}</span>
         </div>
       )}
     </button>

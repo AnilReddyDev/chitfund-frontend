@@ -1,9 +1,11 @@
 // src/components/group/CreateGroupModal.jsx
-import { useState } from "react";
+import { useContext, useState } from "react";
 import api from "../../services/api";
 import { CalendarDays, IndianRupee, Users, X } from "lucide-react";
+import { AppContext } from "../../context/AppContext";
 
 export default function CreateGroupModal({ onClose, refresh }) {
+  const { t } = useContext(AppContext);
   const [form, setForm] = useState({
     name: "",
     totalAmount: "",
@@ -34,7 +36,7 @@ export default function CreateGroupModal({ onClose, refresh }) {
       onClose();
     } catch (err) {
       console.error(err);
-      alert("Error creating group");
+      alert(t("groupsLoadError"));
     } finally {
       setSaving(false);
     }
@@ -46,10 +48,10 @@ export default function CreateGroupModal({ onClose, refresh }) {
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-orange-600">
-              New group
+              {t("newGroup")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-slate-950">
-              Create Chitti Group
+              {t("createChittiGroup")}
             </h2>
           </div>
           <button
@@ -64,7 +66,7 @@ export default function CreateGroupModal({ onClose, refresh }) {
 
         <div className="space-y-3">
           <Field
-            label="Group Name"
+            label={t("groupName")}
             name="name"
             placeholder="Eg: Sankranti Chitti"
             value={form.name}
@@ -74,7 +76,7 @@ export default function CreateGroupModal({ onClose, refresh }) {
           <div className="grid grid-cols-2 gap-3">
             <Field
               icon={<IndianRupee size={16} />}
-              label="Total Amount"
+              label={t("totalAmount")}
               name="totalAmount"
               type="number"
               value={form.totalAmount}
@@ -82,7 +84,7 @@ export default function CreateGroupModal({ onClose, refresh }) {
             />
             <Field
               icon={<IndianRupee size={16} />}
-              label="Monthly Premium"
+              label={t("monthlyPremium")}
               name="monthlyPremium"
               type="number"
               value={form.monthlyPremium}
@@ -93,7 +95,7 @@ export default function CreateGroupModal({ onClose, refresh }) {
           <div className="grid grid-cols-2 gap-3">
             <Field
               icon={<Users size={16} />}
-              label="Members"
+              label={t("members")}
               name="totalMembers"
               type="number"
               value={form.totalMembers}
@@ -101,7 +103,7 @@ export default function CreateGroupModal({ onClose, refresh }) {
             />
             <Field
               icon={<CalendarDays size={16} />}
-              label="Duration"
+              label={t("duration")}
               name="duration"
               type="number"
               value={form.duration}
@@ -111,7 +113,7 @@ export default function CreateGroupModal({ onClose, refresh }) {
 
           <Field
             icon={<CalendarDays size={16} />}
-            label="Payment Start Month"
+            label={t("paymentStartMonth")}
             name="startMonth"
             type="date"
             value={form.startMonth}
@@ -125,7 +127,7 @@ export default function CreateGroupModal({ onClose, refresh }) {
           disabled={saving}
           className="mt-5 w-full rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:bg-slate-400"
         >
-          {saving ? "Creating..." : "Create Group"}
+          {saving ? t("creating") : t("createGroup")}
         </button>
       </div>
     </div>

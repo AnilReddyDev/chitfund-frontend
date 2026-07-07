@@ -3,14 +3,17 @@ import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import LanguageSelector from "../i18n/LanguageSelector";
+import { translate } from "../../utils/i18n";
 
 const Header = ({ title, subtitle }) => {
   const navigate = useNavigate();
-  const { user, logout } = useContext(AppContext);
+  const { user, logout, t = (key, values) => translate("en", key, values) } =
+    useContext(AppContext);
 
   const handleLogout = () => {
     logout();
-    toast.success("Logged out successfully");
+    toast.success(t("loggedOut"));
     navigate("/login", { replace: true });
   };
 
@@ -30,12 +33,14 @@ const Header = ({ title, subtitle }) => {
             <button
               onClick={handleLogout}
               className="rounded-lg p-2 hover:bg-white/20 transition-colors"
-              title="Logout"
+              title={t("logout")}
             >
               <LogOut size={18} />
             </button>
+            <LanguageSelector compact />
           </div>
         )}
+        {!user && <LanguageSelector compact />}
       </div>
     </div>
   );

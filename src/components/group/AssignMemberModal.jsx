@@ -1,15 +1,17 @@
 // src/components/group/AssignMemberModal.jsx
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Check, Phone, Plus, Users, X } from "lucide-react";
 import api from "../../services/api";
 import Skeleton from "../ui/Skeleton";
+import { AppContext } from "../../context/AppContext";
 
 export default function AssignMemberModal({
   groupId,
   existingMembers,
   onClose,
 }) {
+  const { t } = useContext(AppContext);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,7 +29,7 @@ export default function AssignMemberModal({
       .catch((err) => {
         if (!active) return;
         console.error("Error fetching members", err);
-        setError("Could not load members.");
+        setError(t("membersLoadError"));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -36,7 +38,7 @@ export default function AssignMemberModal({
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   const existingIds = new Set(existingMembers || []);
 
@@ -52,7 +54,7 @@ export default function AssignMemberModal({
       onClose();
     } catch (err) {
       console.error("Error assigning member", err);
-      alert("Already added or error");
+      alert(t("alreadyPaidOrError"));
     } finally {
       setLoadingId(null);
     }
@@ -64,10 +66,10 @@ export default function AssignMemberModal({
         <div className="flex items-start justify-between gap-3 border-b border-slate-100 p-4">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-orange-600">
-              Assign members
+              {t("assignMembers")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-slate-950">
-              Select Members
+              {t("selectMembers")}
             </h2>
           </div>
           <button
@@ -97,7 +99,7 @@ export default function AssignMemberModal({
 
           {!loading && !error && members.length === 0 && (
             <p className="rounded-lg bg-slate-50 p-4 text-center text-sm text-slate-400">
-              No saved members to assign.
+              {t("noSavedMembers")}
             </p>
           )}
 
@@ -111,11 +113,11 @@ export default function AssignMemberModal({
               >
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-slate-950">
-                    {member.name || "Unnamed member"}
+                    {member.name || t("unnamedMember")}
                   </p>
                   <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-400">
                     <Phone size={13} />
-                    {member.phone || "No phone"}
+                    {member.phone || t("noPhone")}
                   </p>
                 </div>
 
@@ -126,7 +128,7 @@ export default function AssignMemberModal({
                   className="inline-flex min-w-20 items-center justify-center gap-1.5 rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white disabled:bg-slate-200 disabled:text-slate-500"
                 >
                   {isAdded ? <Check size={14} /> : <Plus size={14} />}
-                  {isAdded ? "Added" : loadingId === member.id ? "Adding" : "Add"}
+                  {isAdded ? t("added") : loadingId === member.id ? t("adding") : t("add")}
                 </button>
               </div>
             );

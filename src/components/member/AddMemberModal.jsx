@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Phone, User, X } from "lucide-react";
 import api from "../../services/api";
+import { AppContext } from "../../context/AppContext";
 
 export default function AddMemberModal({ onClose, refresh }) {
+  const { t } = useContext(AppContext);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [saving, setSaving] = useState(false);
 
   const handleAdd = async () => {
     if (!name.trim()) {
-      alert("Enter member name");
+      alert(t("memberName"));
       return;
     }
 
@@ -20,7 +22,7 @@ export default function AddMemberModal({ onClose, refresh }) {
       onClose();
     } catch (err) {
       console.error("Error adding member", err);
-      alert("Could not add member");
+      alert(t("membersLoadError"));
     } finally {
       setSaving(false);
     }
@@ -32,10 +34,10 @@ export default function AddMemberModal({ onClose, refresh }) {
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-orange-600">
-              New member
+              {t("newMember")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-slate-950">
-              Add Member
+              {t("addMember")}
             </h2>
           </div>
           <button
@@ -51,15 +53,15 @@ export default function AddMemberModal({ onClose, refresh }) {
         <div className="space-y-3">
           <Field
             icon={<User size={16} />}
-            label="Name"
-            placeholder="Member name"
+            label={t("name")}
+            placeholder={t("memberName")}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
           <Field
             icon={<Phone size={16} />}
-            label="Phone"
-            placeholder="Phone number"
+            label={t("phone")}
+            placeholder={t("phoneNumber")}
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
@@ -71,7 +73,7 @@ export default function AddMemberModal({ onClose, refresh }) {
           disabled={saving}
           className="mt-5 w-full rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:bg-slate-400"
         >
-          {saving ? "Adding..." : "Add Member"}
+          {saving ? t("adding") : t("addMember")}
         </button>
       </div>
     </div>

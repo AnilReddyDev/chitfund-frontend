@@ -10,7 +10,7 @@ import { AppContext } from "../context/AppContext";
 import { PERMISSIONS, hasPermission } from "../utils/permissions";
 
 export default function MemberHistory() {
-  const { role } = useContext(AppContext);
+  const { role, t } = useContext(AppContext);
   const [members, setMembers] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ export default function MemberHistory() {
       applyMembers(res.data);
     } catch (err) {
       console.error("Error fetching members", err);
-      setError("Could not load members. Please try again.");
+      setError(t("membersLoadError"));
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ export default function MemberHistory() {
       .catch((err) => {
         if (!active) return;
         console.error("Error fetching members", err);
-        setError("Could not load members. Please try again.");
+        setError(t("membersLoadError"));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -57,14 +57,14 @@ export default function MemberHistory() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   return (
-    <PageShell title="All Members" subtitle={`${members.length} saved members`}>
+    <PageShell title={t("members")} subtitle={t("savedMembers", { count: members.length })}>
       <PageHero
-        eyebrow="Member directory"
-        title="Members"
-        description="Keep a clean member list that can be assigned to any chit group."
+        eyebrow={t("memberDirectory")}
+        title={t("members")}
+        description={t("membersDesc")}
         icon={<Users size={22} />}
       />
 
@@ -73,9 +73,9 @@ export default function MemberHistory() {
       {!loading && error && (
         <StatePanel
           icon={<AlertCircle size={22} />}
-          title="Unable to load members"
+          title={t("unableLoadMembers")}
           message={error}
-          actionLabel="Retry"
+          actionLabel={t("retry")}
           onAction={fetchMembers}
         />
       )}
@@ -83,9 +83,9 @@ export default function MemberHistory() {
       {!loading && !error && members.length === 0 && (
         <StatePanel
           icon={<UserPlus size={22} />}
-          title="No members yet"
-          message="Add members here first, then assign them to a group."
-          actionLabel={canManageMembers ? "Add member" : null}
+          title={t("noMembers")}
+          message={t("noMembersMessage")}
+          actionLabel={canManageMembers ? t("addMember") : null}
           onAction={canManageMembers ? () => setOpen(true) : undefined}
         />
       )}
@@ -100,11 +100,11 @@ export default function MemberHistory() {
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <h2 className="truncate text-base font-semibold text-slate-950">
-                    {member.name || "Unnamed member"}
+                    {member.name || t("unnamedMember")}
                   </h2>
                   <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-400">
                     <Phone size={14} />
-                    {member.phone || "No phone"}
+                    {member.phone || t("noPhone")}
                   </p>
                 </div>
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-600">

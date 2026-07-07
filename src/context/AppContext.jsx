@@ -1,21 +1,34 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { AppContext } from "./AppContext";
 import { authService } from "../services/auth";
+import { translate } from "../utils/i18n";
 
 export const AppProvider = ({ children }) => {
   const storedToken = authService.getToken();
   const storedUser = storedToken ? authService.getUser() : null;
   const storedRole = storedToken ? authService.getRole() : null;
+  const storedLanguage = localStorage.getItem("language") || "en";
   const [groups, setGroups] = useState([]);
   const [members, setMembers] = useState([]);
   const [groupId, setGroupId] = useState(null);
   const [token, setToken] = useState(storedToken);
   const [user, setUser] = useState(storedUser);
   const [role, setRole] = useState(storedRole);
+  const [language, setLanguageState] = useState(storedLanguage);
   const [isAuthenticated, setIsAuthenticated] = useState(
     Boolean(storedToken && storedUser && storedRole),
   );
   const loading = false;
+
+  const setLanguage = (nextLanguage) => {
+    localStorage.setItem("language", nextLanguage);
+    setLanguageState(nextLanguage);
+  };
+
+  const t = useCallback(
+    (key, values) => translate(language, key, values),
+    [language],
+  );
 
   // ➕ Add Group
   const addGroup = (group) => {
@@ -66,6 +79,9 @@ export const AppProvider = ({ children }) => {
         token,
         user,
         role,
+        language,
+        setLanguage,
+        t,
         isAuthenticated,
         login,
         logout,

@@ -13,7 +13,7 @@ import { AppContext } from "../context/AppContext";
 import { PERMISSIONS, hasPermission } from "../utils/permissions";
 
 export default function Ledger() {
-  const { role } = useContext(AppContext);
+  const { role, t } = useContext(AppContext);
   const { groupId } = useParams();
   const groupMeta = useGroupMeta();
   const canRecordPayment = hasPermission(PERMISSIONS.PAYMENT_CREATE, role);
@@ -35,7 +35,7 @@ export default function Ledger() {
   const loadLedger = async ({ showLoading = true } = {}) => {
     if (!groupId) {
       setLoading(false);
-      setError("Select a group before opening the ledger.");
+      setError(t("selectGroupLedgerError"));
       return;
     }
 
@@ -46,7 +46,7 @@ export default function Ledger() {
       applyLedger(res.data);
     } catch (err) {
       console.error("Error loading ledger", err);
-      setError("Could not load ledger data. Please try again.");
+      setError(t("ledgerLoadError"));
     } finally {
       setLoading(false);
     }
@@ -68,7 +68,7 @@ export default function Ledger() {
       .catch((err) => {
         if (!active) return;
         console.error("Error loading ledger", err);
-        setError("Could not load ledger data. Please try again.");
+        setError(t("ledgerLoadError"));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -77,7 +77,7 @@ export default function Ledger() {
     return () => {
       active = false;
     };
-  }, [groupId]);
+  }, [groupId, t]);
 
   const displayGroupName = groupName || groupMeta.displayName;
   const pageSubtitle = groupId
@@ -87,17 +87,17 @@ export default function Ledger() {
       ]
         .filter(Boolean)
         .join(" • ")
-    : "No group selected";
+    : t("noGroupSelected");
 
   return (
-    <PageShell title="Ledger" subtitle={pageSubtitle}>
+    <PageShell title={t("ledger")} subtitle={pageSubtitle}>
       <PageHero
-        eyebrow="Payment tracking"
-        title="Ledger"
+        eyebrow={t("paymentTracking")}
+        title={t("ledger")}
         description={
           canRecordPayment
-            ? "Tap any unpaid month cell to record a payment for the selected group."
-            : "Review payment status and collection history for the selected group."
+            ? t("ledgerDescManage")
+            : t("ledgerDescView")
         }
         icon={<ListChecks size={22} />}
       />
@@ -105,8 +105,8 @@ export default function Ledger() {
       {!groupId && (
         <StatePanel
           icon={<ListChecks size={22} />}
-          title="No group selected"
-          message="Open a group first, then use the ledger tab for that group."
+          title={t("noGroupSelected")}
+          message={t("openGroupLedgerMessage")}
         />
       )}
 
@@ -115,9 +115,9 @@ export default function Ledger() {
       {groupId && !loading && error && (
         <StatePanel
           icon={<AlertCircle size={22} />}
-          title="Unable to load ledger"
+          title={t("unableLoadLedger")}
           message={error}
-          actionLabel="Retry"
+          actionLabel={t("retry")}
           onAction={loadLedger}
         />
       )}
@@ -125,8 +125,8 @@ export default function Ledger() {
       {groupId && !loading && !error && members.length === 0 && (
         <StatePanel
           icon={<ListChecks size={22} />}
-          title="No ledger rows yet"
-          message="Add members to this group before collecting monthly payments."
+          title={t("noLedgerRows")}
+          message={t("noLedgerRowsMessage")}
         />
       )}
 
@@ -135,10 +135,10 @@ export default function Ledger() {
           <div className="flex items-center justify-between gap-3 border-b border-slate-100 p-3">
             <div>
               <h2 className="text-sm font-semibold text-slate-950">
-                Payment Matrix
+                {t("paymentMatrix")}
               </h2>
               <p className="text-xs text-slate-400">
-                {members.length} members, {months.length} months
+                {t("membersMonths", { members: members.length, months: months.length })}
               </p>
             </div>
             <Can permissions={[PERMISSIONS.REPORT_EXPORT]}>
@@ -157,7 +157,7 @@ export default function Ledger() {
               <thead className="sticky top-0 bg-slate-50 text-slate-500">
                 <tr>
                   <th className="border-b border-slate-100 p-3 text-left font-semibold">
-                    Member
+                    {t("member")}
                   </th>
                   {months.map((month) => (
                     <th
@@ -174,7 +174,7 @@ export default function Ledger() {
                 {members.map((member) => (
                   <tr key={member.memberId} className="border-b border-slate-100 last:border-0">
                     <td className="whitespace-nowrap p-3 font-medium text-slate-950">
-                      {member.name || `Member ${member.memberId}`}
+                      {member.name || `${t("member")} ${member.memberId}`}
                     </td>
 
                     {(member.payments || []).map((payment) => (
@@ -197,7 +197,7 @@ export default function Ledger() {
                               : "border-slate-200 bg-white text-slate-300 active:scale-[0.98]"
                           }`}
                         >
-                          {payment.paid ? "Paid" : "-"}
+                          {payment.paid ? t("paid") : "-"}
                         </button>
                       </td>
                     ))}

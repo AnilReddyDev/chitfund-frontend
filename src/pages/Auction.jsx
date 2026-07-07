@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { AlertCircle, Gavel, IndianRupee, Trophy } from "lucide-react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
@@ -7,8 +7,10 @@ import Skeleton from "../components/ui/Skeleton";
 import useGroupMeta from "../hooks/useGroupMeta";
 import Can from "../components/auth/Can";
 import { PERMISSIONS } from "../utils/permissions";
+import { AppContext } from "../context/AppContext";
 
 export default function Auction() {
+  const { t } = useContext(AppContext);
   const { groupId } = useParams();
   const groupMeta = useGroupMeta();
 
@@ -40,7 +42,7 @@ export default function Auction() {
   const loadAuction = async ({ showLoading = true } = {}) => {
     if (!groupId) {
       setLoading(false);
-      setError("Select a group before opening auctions.");
+      setError(t("selectGroupAuctionError"));
       return;
     }
 
@@ -57,7 +59,7 @@ export default function Auction() {
       applyAuctionData(groupMemberRes.data, memberRes.data, auctionRes.data);
     } catch (err) {
       console.error("Error loading auction", err);
-      setError("Could not load auction data. Please try again.");
+      setError(t("auctionLoadError"));
     } finally {
       setLoading(false);
     }
@@ -82,7 +84,7 @@ export default function Auction() {
       .catch((err) => {
         if (!active) return;
         console.error("Error loading auction", err);
-        setError("Could not load auction data. Please try again.");
+        setError(t("auctionLoadError"));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -91,11 +93,11 @@ export default function Auction() {
     return () => {
       active = false;
     };
-  }, [groupId]);
+  }, [groupId, t]);
 
   const handleAuction = async () => {
     if (!winner || !month || !bidAmount) {
-      alert("Fill all fields");
+      alert(t("auctionDesc"));
       return;
     }
 
@@ -114,7 +116,7 @@ export default function Auction() {
       setMonth("");
       setBidAmount("");
       await loadAuction({ showLoading: false });
-      alert("Auction completed");
+      alert(t("confirmAuction"));
     } catch (err) {
       console.error("Error completing auction", err);
       alert(err.response?.data || "Error");
@@ -124,19 +126,19 @@ export default function Auction() {
   };
 
   return (
-    <PageShell title="Auction" subtitle={groupMeta.subtitle}>
+    <PageShell title={t("auction")} subtitle={groupMeta.subtitle}>
       <PageHero
-        eyebrow="Monthly auction"
-        title="Auction"
-        description="Pick a month, select an eligible winner, and record bid details for the selected group."
+        eyebrow={t("monthlyAuction")}
+        title={t("auction")}
+        description={t("auctionDesc")}
         icon={<Gavel size={22} />}
       />
 
       {!groupId && (
         <StatePanel
           icon={<Gavel size={22} />}
-          title="No group selected"
-          message="Open a group first, then use the auction tab for that group."
+          title={t("noGroupSelected")}
+          message={t("openGroupAuctionMessage")}
         />
       )}
 
@@ -145,9 +147,9 @@ export default function Auction() {
       {groupId && !loading && error && (
         <StatePanel
           icon={<AlertCircle size={22} />}
-          title="Unable to load auction"
+          title={t("unableLoadAuction")}
           message={error}
-          actionLabel="Retry"
+          actionLabel={t("retry")}
           onAction={loadAuction}
         />
       )}
@@ -159,28 +161,28 @@ export default function Auction() {
               <div className="mb-4 flex items-center gap-2">
                 <Gavel size={18} className="text-orange-600" />
                 <h2 className="text-sm font-semibold text-slate-950">
-                  Record Auction
+                  {t("recordAuction")}
                 </h2>
               </div>
 
               <div className="space-y-3">
-                <Field label="Month">
+                <Field label={t("month")}>
                   <input
                     type="number"
                     value={month}
                     className="field-input"
-                    placeholder="Enter month"
+                    placeholder={t("enterMonth")}
                     onChange={(e) => setMonth(e.target.value)}
                   />
                 </Field>
 
-                <Field label="Winner">
+                <Field label={t("winner")}>
                   <select
                     value={winner}
                     className="field-input"
                     onChange={(e) => setWinner(e.target.value)}
                   >
-                    <option value="">Select winner</option>
+                    <option value="">{t("selectWinner")}</option>
                     {members.map((member) => {
                       const alreadyWon = wonMemberIds.has(member.memberId);
                       const profile = memberMap[member.memberId];
@@ -191,7 +193,7 @@ export default function Auction() {
                           value={member.memberId}
                           disabled={alreadyWon}
                         >
-                          {profile?.name || `Member ${member.memberId}`}
+                          {profile?.name || `${t("member")} ${member.memberId}`}
                           {alreadyWon ? " (Won)" : ""}
                         </option>
                       );
@@ -199,7 +201,7 @@ export default function Auction() {
                   </select>
                 </Field>
 
-                <Field label="Bid Amount">
+                <Field label={t("bidAmount")}>
                   <div className="relative">
                     <IndianRupee
                       size={16}
@@ -209,7 +211,7 @@ export default function Auction() {
                       type="number"
                       value={bidAmount}
                       className="field-input pl-9"
-                      placeholder="Enter bid amount"
+                      placeholder={t("enterBidAmount")}
                       onChange={(e) => setBidAmount(e.target.value)}
                     />
                   </div>
@@ -222,7 +224,7 @@ export default function Auction() {
                 disabled={saving || members.length === 0}
                 className="mt-5 w-full rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:bg-slate-400"
               >
-                {saving ? "Confirming..." : "Confirm Auction"}
+                {saving ? t("confirming") : t("confirmAuction")}
               </button>
             </section>
           </Can>
@@ -230,14 +232,14 @@ export default function Auction() {
           <section className="mt-5">
             <div className="mb-3 flex items-center gap-2 text-white">
               <Trophy size={18} />
-              <h2 className="text-sm font-semibold">Auction History</h2>
+              <h2 className="text-sm font-semibold">{t("auctionHistory")}</h2>
             </div>
 
             {auctionHistory.length === 0 ? (
               <StatePanel
                 icon={<Trophy size={22} />}
-                title="No auctions yet"
-                message="Completed auctions will appear here for this group."
+                title={t("noAuctions")}
+                message={t("noAuctionsMessage")}
               />
             ) : (
               <div className="space-y-3">
@@ -246,6 +248,7 @@ export default function Auction() {
                     key={auction.id}
                     auction={auction}
                     member={memberMap[auction.winnerMemberId]}
+                    t={t}
                   />
                 ))}
               </div>
@@ -268,20 +271,20 @@ function Field({ label, children }) {
   );
 }
 
-function AuctionHistoryCard({ auction, member }) {
+function AuctionHistoryCard({ auction, member, t }) {
   return (
     <div className="rounded-lg border border-white/20 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-            Month {auction.month}
+            {t("month")} {auction.month}
           </p>
           <h3 className="mt-1 text-base font-semibold text-slate-950">
-            {member?.name || `Member ${auction.winnerMemberId}`}
+            {member?.name || `${t("member")} ${auction.winnerMemberId}`}
           </h3>
         </div>
         <div className="rounded-lg bg-emerald-50 px-3 py-2 text-right">
-          <p className="text-xs text-emerald-600">Profit</p>
+          <p className="text-xs text-emerald-600">{t("profit")}</p>
           <p className="font-semibold text-emerald-800">
             {formatCurrency(auction.profit)}
           </p>
@@ -289,13 +292,13 @@ function AuctionHistoryCard({ auction, member }) {
       </div>
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
         <div className="rounded-lg bg-slate-50 p-3">
-          <p className="text-xs text-slate-400">Payout</p>
+          <p className="text-xs text-slate-400">{t("payout")}</p>
           <p className="font-semibold text-slate-950">
             {formatCurrency(auction.payoutAmount)}
           </p>
         </div>
         <div className="rounded-lg bg-slate-50 p-3">
-          <p className="text-xs text-slate-400">Winner ID</p>
+          <p className="text-xs text-slate-400">{t("winnerId")}</p>
           <p className="font-semibold text-slate-950">
             {auction.winnerMemberId}
           </p>

@@ -14,7 +14,7 @@ import { AppContext } from "../context/AppContext";
 import { PERMISSIONS, hasPermission } from "../utils/permissions";
 
 export default function GroupMemberHistory() {
-  const { role } = useContext(AppContext);
+  const { role, t } = useContext(AppContext);
   const { groupId } = useParams();
   const groupMeta = useGroupMeta();
 
@@ -38,7 +38,7 @@ export default function GroupMemberHistory() {
   const fetchMembers = async ({ showLoading = true } = {}) => {
     if (!groupId) {
       setLoading(false);
-      setError("Select a group before opening members.");
+      setError(t("selectGroupMembersError"));
       return;
     }
 
@@ -54,7 +54,7 @@ export default function GroupMemberHistory() {
       applyMembers(groupMemberRes.data, memberRes.data);
     } catch (err) {
       console.error("Error fetching group members", err);
-      setError("Could not load group members. Please try again.");
+      setError(t("groupMembersLoadError"));
     } finally {
       setLoading(false);
     }
@@ -78,7 +78,7 @@ export default function GroupMemberHistory() {
       .catch((err) => {
         if (!active) return;
         console.error("Error fetching group members", err);
-        setError("Could not load group members. Please try again.");
+        setError(t("groupMembersLoadError"));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -87,22 +87,22 @@ export default function GroupMemberHistory() {
     return () => {
       active = false;
     };
-  }, [groupId]);
+  }, [groupId, t]);
 
   return (
-    <PageShell title="Group Members" subtitle={groupMeta.subtitle}>
+    <PageShell title={t("groupMembers")} subtitle={groupMeta.subtitle}>
       <PageHero
-        eyebrow="Group directory"
-        title={`${members.length} Members`}
-        description="Assign saved members to this group before tracking ledger payments and auctions."
+        eyebrow={t("groupDirectory")}
+        title={t("memberCountTitle", { count: members.length })}
+        description={t("groupMembersDesc")}
         icon={<Users size={22} />}
       />
 
       {!groupId && (
         <StatePanel
           icon={<Users size={22} />}
-          title="No group selected"
-          message="Open a group first, then assign members from that group page."
+          title={t("noGroupSelected")}
+          message={t("openGroupMembersMessage")}
         />
       )}
 
@@ -111,9 +111,9 @@ export default function GroupMemberHistory() {
       {groupId && !loading && error && (
         <StatePanel
           icon={<AlertCircle size={22} />}
-          title="Unable to load members"
+          title={t("unableLoadMembers")}
           message={error}
-          actionLabel="Retry"
+          actionLabel={t("retry")}
           onAction={fetchMembers}
         />
       )}
@@ -121,9 +121,9 @@ export default function GroupMemberHistory() {
       {groupId && !loading && !error && members.length === 0 && (
         <StatePanel
           icon={<UserPlus size={22} />}
-          title="No members assigned"
-          message="Assign members to this group to begin payments and auctions."
-          actionLabel={canManageMembers ? "Assign member" : null}
+          title={t("noMembersAssigned")}
+          message={t("noMembersAssignedMessage")}
+          actionLabel={canManageMembers ? t("assignMember") : null}
           onAction={canManageMembers ? () => setOpen(true) : undefined}
         />
       )}
@@ -141,11 +141,11 @@ export default function GroupMemberHistory() {
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <h2 className="truncate text-base font-semibold text-slate-950">
-                      {member?.name || `Member ${id}`}
+                      {member?.name || `${t("member")} ${id}`}
                     </h2>
                     <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-400">
                       <Phone size={14} />
-                      {member?.phone || "No phone"}
+                    {member?.phone || t("noPhone")}
                     </p>
                   </div>
                   <div className="rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600">

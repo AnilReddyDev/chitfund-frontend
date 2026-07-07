@@ -4,20 +4,22 @@ import { Link, useLocation } from "react-router-dom";
 import useGroup from "../../hooks/useGroup";
 import { AppContext } from "../../context/AppContext";
 import { hasAnyPermission, PERMISSIONS } from "../../utils/permissions";
+import { translate } from "../../utils/i18n";
 
 const BottomNav = () => {
   const groupId = useGroup();
   const { pathname } = useLocation();
-  const { role } = useContext(AppContext);
+  const { role, t = (key, values) => translate("en", key, values) } =
+    useContext(AppContext);
 
   const items = [
-    { to: "/", icon: <Home size={21} />, label: "Groups", permissions: [PERMISSIONS.GROUP_VIEW] },
-    { to: groupId ? `/group/${groupId}/ledger` : "/", icon: <List size={21} />, label: "Ledger", permissions: [PERMISSIONS.REPORT_VIEW, PERMISSIONS.PAYMENT_VIEW] },
-    { to: groupId ? `/group/${groupId}/dashboard` : "/", icon: <BarChart size={21} />, label: "Dashboard", permissions: [PERMISSIONS.DASHBOARD_VIEW] },
-    { to: "/members", icon: <Users size={21} />, label: "Members", permissions: [PERMISSIONS.MEMBER_VIEW] },
-    { to: groupId ? `/group/${groupId}/auction` : "/", icon: <Gavel size={21} />, label: "Auction", permissions: [PERMISSIONS.AUCTION_VIEW] },
-    { to: "/settings/audit-logs", icon: <FileClock size={21} />, label: "Audit", permissions: [PERMISSIONS.AUDIT_VIEW] },
-    { to: "/settings/users", icon: <Settings size={21} />, label: "Users", permissions: [PERMISSIONS.USER_MANAGE] },
+    { to: "/", icon: <Home size={21} />, label: t("groups"), permissions: [PERMISSIONS.GROUP_VIEW] },
+    { to: groupId ? `/group/${groupId}/ledger` : "/", icon: <List size={21} />, label: t("ledger"), permissions: [PERMISSIONS.REPORT_VIEW, PERMISSIONS.PAYMENT_VIEW] },
+    { to: groupId ? `/group/${groupId}/dashboard` : "/", icon: <BarChart size={21} />, label: t("dashboard"), permissions: [PERMISSIONS.DASHBOARD_VIEW] },
+    { to: "/members", icon: <Users size={21} />, label: t("members"), permissions: [PERMISSIONS.MEMBER_VIEW] },
+    { to: groupId ? `/group/${groupId}/auction` : "/", icon: <Gavel size={21} />, label: t("auction"), permissions: [PERMISSIONS.AUCTION_VIEW] },
+    { to: "/settings/audit-logs", icon: <FileClock size={21} />, label: t("audit"), permissions: [PERMISSIONS.AUDIT_VIEW] },
+    { to: "/settings/users", icon: <Settings size={21} />, label: t("users"), permissions: [PERMISSIONS.USER_MANAGE] },
   ].filter((item) => hasAnyPermission(item.permissions, role));
 
   return (

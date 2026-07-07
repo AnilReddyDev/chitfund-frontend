@@ -30,6 +30,7 @@ const EMPTY_OBJECT = {};
 
 export default function Dashboard() {
   const { role } = useContext(AppContext);
+  const { t } = useContext(AppContext);
   const { groupId } = useParams();
   const groupMeta = useGroupMeta();
   const [loading, setLoading] = useState(true);
@@ -54,7 +55,7 @@ export default function Dashboard() {
   const loadDashboard = async ({ showLoading = true } = {}) => {
     if (!groupId) {
       setLoading(false);
-      setError("Select a group before opening the dashboard.");
+      setError(t("selectGroupDashboardError"));
       return;
     }
 
@@ -70,7 +71,7 @@ export default function Dashboard() {
       applyDashboard(summaryRes.data);
     } catch (err) {
       console.error("Error loading dashboard", err);
-      setError("Could not load dashboard data. Please try again.");
+      setError(t("dashboardLoadError"));
     } finally {
       setLoading(false);
     }
@@ -94,7 +95,7 @@ export default function Dashboard() {
       .catch((err) => {
         if (!active) return;
         console.error("Error loading dashboard", err);
-        setError("Could not load dashboard data. Please try again.");
+        setError(t("dashboardLoadError"));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -103,7 +104,7 @@ export default function Dashboard() {
     return () => {
       active = false;
     };
-  }, [groupId, selectedMonth]);
+  }, [groupId, selectedMonth, t]);
 
   const group = summary?.group ?? EMPTY_OBJECT;
   const collection = summary?.collection ?? EMPTY_OBJECT;
@@ -222,7 +223,7 @@ export default function Dashboard() {
       ]
         .filter(Boolean)
         .join(" • ")
-    : "No group selected";
+    : t("noGroupSelected");
 
   return (
     <PageShell
@@ -230,17 +231,17 @@ export default function Dashboard() {
       subtitle={pageSubtitle}
     >
       <PageHero
-        eyebrow="Group command center"
-        title={displayGroup.name || "Dashboard"}
-        description="Track monthly collection, risks, auctions, member dues, and profit from one operational view."
+        eyebrow={t("groupCommandCenter")}
+        title={displayGroup.name || t("dashboard")}
+        description={t("dashboardDesc")}
         icon={<BarChart3 size={22} />}
       />
 
       {!groupId && (
         <StatePanel
           icon={<BarChart3 size={22} />}
-          title="No group selected"
-          message="Open a group first, then use the dashboard tab for that group."
+          title={t("noGroupSelected")}
+          message={t("openGroupDashboardMessage")}
         />
       )}
 
@@ -249,9 +250,9 @@ export default function Dashboard() {
       {groupId && !loading && error && (
         <StatePanel
           icon={<AlertCircle size={22} />}
-          title="Unable to load dashboard"
+          title={t("unableLoadDashboard")}
           message={error}
-          actionLabel="Retry"
+          actionLabel={t("retry")}
           onAction={loadDashboard}
         />
       )}
@@ -267,30 +268,30 @@ export default function Dashboard() {
             canMoveNext={canMoveNext}
           />
 
-          <MonthlySummary group={displayGroup} collection={displayCollection} />
+          <MonthlySummary group={displayGroup} collection={displayCollection} t={t} />
 
-          <NeedsAttention items={visibleAttentionItems} />
+          <NeedsAttention items={visibleAttentionItems} t={t} />
 
           <div className="grid grid-cols-2 gap-3">
             <MetricCard
               icon={<IndianRupee size={18} />}
-              title="Total Collected"
+              title={t("totalCollected")}
               value={formatCurrency(collection.totalCollectedTillNow)}
             />
             <MetricCard
               icon={<TrendingUp size={18} />}
-              title="Total Profit"
+              title={t("totalProfit")}
               value={formatCurrency(profit.totalProfit)}
             />
             <MetricCard
               icon={<Users size={18} />}
-              title="Members"
+              title={t("members")}
               value={`${displayGroup.assignedMembers || 0}/${displayGroup.totalMembers || 0}`}
             />
             {hasPermission(PERMISSIONS.AUCTION_VIEW, role) && (
               <MetricCard
                 icon={<Gavel size={18} />}
-                title="Eligible Auctions"
+                title={t("eligibleAuctions")}
                 value={displayAuction.nextAuction?.eligibleMembers ?? 0}
               />
             )}
@@ -324,14 +325,14 @@ export default function Dashboard() {
             variant="overdue"
           />
 
-          <QuickActions groupId={groupId} role={role} />
+          <QuickActions groupId={groupId} role={role} t={t} />
         </div>
       )}
     </PageShell>
   );
 }
 
-function MonthlySummary({ group, collection }) {
+function MonthlySummary({ group, collection, t }) {
   const rate = clampPercent(collection.collectionRate);
   const month = group.currentMonth || 0;
   const duration = group.duration || 0;
@@ -341,24 +342,24 @@ function MonthlySummary({ group, collection }) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-            Current Month
+            {t("currentMonth")}
           </p>
           <h2 className="mt-1 text-2xl font-semibold text-slate-950">
-            Month {month || "-"} {duration ? `of ${duration}` : ""}
+            {t("month")} {month || "-"} {duration ? `/ ${duration}` : ""}
           </h2>
         </div>
         <div className={statusPill(rate)}>
-          {rate}% complete
+          {rate}% {t("complete")}
         </div>
       </div>
 
       <div className="mt-5">
         <div className="mb-2 flex justify-between text-sm">
           <span className="font-medium text-slate-600">
-            {formatCurrency(collection.collectedThisMonth)} collected
+            {formatCurrency(collection.collectedThisMonth)} {t("collected")}
           </span>
           <span className="text-slate-400">
-            {formatCurrency(collection.expectedThisMonth)} expected
+            {formatCurrency(collection.expectedThisMonth)} {t("expected")}
           </span>
         </div>
         <div className="h-3 overflow-hidden rounded-full bg-slate-100">
@@ -370,8 +371,8 @@ function MonthlySummary({ group, collection }) {
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <MiniStat title="Pending" value={formatCurrency(collection.pendingThisMonth)} />
-        <MiniStat title="Premium" value={formatCurrency(group.monthlyPremium)} />
+        <MiniStat title={t("pending")} value={formatCurrency(collection.pendingThisMonth)} />
+        <MiniStat title={t("premium")} value={formatCurrency(group.monthlyPremium)} />
       </div>
     </section>
   );
@@ -421,16 +422,16 @@ function MonthNavigator({
   );
 }
 
-function NeedsAttention({ items }) {
+function NeedsAttention({ items, t }) {
   return (
     <section className="rounded-lg border border-white/20 bg-white p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-            Action required
+            {t("actionRequired")}
           </p>
           <h2 className="mt-1 text-base font-semibold text-slate-950">
-            Needs Attention
+            {t("needsAttention")}
           </h2>
         </div>
         <CalendarClock size={20} className="text-orange-600" />
@@ -693,25 +694,25 @@ function BreakdownRow({ label, value, helper, tone }) {
   );
 }
 
-function QuickActions({ groupId, role }) {
+function QuickActions({ groupId, role, t }) {
   const actions = [
     {
-      label: "Open Ledger",
-      helper: "Collect or verify payments",
+      label: t("openLedger"),
+      helper: t("collectOrVerify"),
       icon: <ReceiptText size={18} />,
       to: `/group/${groupId}/ledger`,
       permission: PERMISSIONS.PAYMENT_VIEW,
     },
     {
-      label: "Run Auction",
-      helper: "Complete selected month auction",
+      label: t("runAuction"),
+      helper: t("completeAuction"),
       icon: <Gavel size={18} />,
       to: `/group/${groupId}/auction`,
       permission: PERMISSIONS.AUCTION_VIEW,
     },
     {
-      label: "Manage Members",
-      helper: "Assign missing group members",
+      label: t("manageMembers"),
+      helper: t("assignMissingMembers"),
       icon: <Users size={18} />,
       to: `/group/${groupId}/members`,
       permission: PERMISSIONS.MEMBER_VIEW,
@@ -724,10 +725,10 @@ function QuickActions({ groupId, role }) {
     <section className="rounded-lg border border-white/20 bg-white p-4 shadow-sm">
       <div className="mb-3">
         <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-          Shortcuts
+          {t("shortcuts")}
         </p>
         <h2 className="mt-1 text-base font-semibold text-slate-950">
-          Quick Actions
+          {t("quickActions")}
         </h2>
       </div>
 
